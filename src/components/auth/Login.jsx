@@ -1,8 +1,42 @@
+import axios from 'axios';
 import './Login.css';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+ const [email, setEmail] = useState('');
+ const [password, setPassword] = useState('');
+ const navigate = useNavigate();
+
+  const handleSubmit =async (e) => {
+    try {
+      e.preventDefault();
+      // Handle login logic here, e.g., API call to authenticate user
+      const response=await axios.post('http://localhost:5000/api/v1/users/login', {
+        email,
+        password
+      },{ withCredentials: true } );
+      if (response.status === 200) {
+        console.log('Login successful:', response);
+        localStorage.setItem('authToken', response.data.token); // Store token in localStorage
+        // Handle successful login, e.g., redirect or show success message
+        navigate('/'); // Redirect to home or another page after successful login
+        
+        console.log('Login successful:', response.data);
+      } else {
+        // Handle login error
+        console.error('Login failed:', response.data);
+      }
+    } catch (error) {
+      // Handle error, e.g., show error message
+      console.error('Error during login:', error);
+      
+    }
+    
+    
+  };
   return (
-    <div className="row vh-100 ">
+    <div className="row vh-100 w-100 ">
 
       {/* Left Side Of Page */}
       <div className="col-lg-6 col-12 d-flex align-items-center justify-content-center leftside-bg">
@@ -23,6 +57,8 @@ function Login() {
                 type="email"
                 className="form-control bg-dark text-white border-0"
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
               />
             </div>
@@ -33,6 +69,8 @@ function Login() {
                 type="password"
                 className="form-control bg-dark text-white border-0"
                 id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
               />
             </div>
@@ -45,7 +83,7 @@ function Login() {
               <a href="#" className="text-success text-decoration-none">Forgot password?</a>
             </div>
 
-            <button type="submit" className="btn btn-success w-100 fw-semibold">
+            <button type="submit" className="btn btn-success w-100 fw-semibold" onClick={handleSubmit}>
               Sign in to your account
             </button>
           </form>
