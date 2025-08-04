@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import socket from '../../socket/SocketUser.js';
+// import socket from '../../socket/SocketUser.js';
+import CategoryContainer from './CategoryContainer.jsx';
+import SparePartsPage from '../product/SparePartsPage.jsx';
 import axios from 'axios';
+import MapComponent from '../map/MapComponent.jsx';
 function getAuthToken() {
   return localStorage.getItem('authToken');
 }
@@ -55,6 +58,7 @@ const HomeScreen = () => {
   return (
     <div className="container mt-4">
       {/* Hero section */}
+      <MapComponent/>
       <div className="jumbotron p-4 mb-4 bg-light border rounded">
         <div className="row align-items-center">
           <div className="col-md-6">
