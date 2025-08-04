@@ -133,3 +133,8 @@ body {
 
 
 /* navbarend */
+
+/*Shop Component CSS*/
+.shop-container:hover{
+  background-color: #1a2238;
+}
