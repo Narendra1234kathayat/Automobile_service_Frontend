@@ -18,7 +18,7 @@ function Root() {
   const location = useLocation();
 
   // Hide Navbar only on /login route
-  const hideNavbarOnPaths = ['/login'];
+  const hideNavbarOnPaths = ['/login','/register'];
   const shouldShowNavbar = !hideNavbarOnPaths.includes(location.pathname);
 
   return (
