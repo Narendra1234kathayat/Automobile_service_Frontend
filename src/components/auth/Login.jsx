@@ -2,6 +2,7 @@ import axios from 'axios';
 import './Login.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import socket from '../../socket/SocketUser.js';
 
 function Login() {
  const [email, setEmail] = useState('');
@@ -17,10 +18,16 @@ function Login() {
         password
       },{ withCredentials: true } );
       if (response.status === 200) {
-        console.log('Login successful:', response);
-        localStorage.setItem('authToken', response.data.token); // Store token in localStorage
+        
+        localStorage.setItem('user', JSON.stringify(response.data.data._id)); // Store user data in localStorage
+        localStorage.setItem('authToken', response.data.data.token); // Store token in localStorage
         // Handle successful login, e.g., redirect or show success message
+        const userId=localStorage.getItem('user');
+        if(userId){}
+          socket.emit('register', userId);
+        
         navigate('/'); // Redirect to home or another page after successful login
+
         
         console.log('Login successful:', response.data);
       } else {
@@ -35,6 +42,7 @@ function Login() {
     
     
   };
+ 
   return (
     <div className="row vh-100 w-100 ">
 

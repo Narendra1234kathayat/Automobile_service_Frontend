@@ -12,6 +12,7 @@ import Navbar from './components/navbar/Navbar.jsx';
 import HomeScreen from './components/home/HomeScreen.jsx';
 import Login from './components/auth/Login.jsx';
 import Register from './components/auth/Register.jsx';
+import ProfilePage from './components/profile/ProfilePage.jsx';
 
 function Root() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function Root() {
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </>
   )

@@ -32,11 +32,11 @@ const Navbar = () => {
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
                 <a
-                  className={`nav-link responsive-text ${activeItem === "Services" ? "active " : ""}`}
+                  className={`nav-link responsive-text ${activeItem === "Notification" ? "active " : ""}`}
                   href="#"
                   onClick={() => handleNavClick("Services")}
                 >
-                  Services
+                  Notification
                 </a>
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
@@ -45,26 +45,26 @@ const Navbar = () => {
                   href="#"
                   onClick={() => handleNavClick("History")}
                 >
-                  Services history
+                  Orders
                 </a>
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
                 <a
-                  className={`nav-link responsive-text ${activeItem === "Contact" ? "active " : ""}`}
+                  className={`nav-link responsive-text ${activeItem === "Cart" ? "active " : ""}`}
                   href="#"
                   onClick={() => handleNavClick("Contact")}
                 >
-                  Contact us
+                  Cart Page
                 </a>
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
-                <a
+                <Link
                   className={`nav-link responsive-text ${activeItem === "Profile" ? "active " : ""}`}
-                  href="#"
+                  to={"/profile"}
                   onClick={() => handleNavClick("Profile")}
                 >
                   Profile
-                </a>
+                </Link>
               </li>
             </ul>
 
