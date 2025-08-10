@@ -87,7 +87,8 @@ const MapComponent = () => {
   // }, []);
 
   return (
-    <div>
+    <div className="row container">
+      <div className="col-12 ">
       <h3>📍 Real-Time Map - {userId}</h3>
       <p>Latitude: {myPosition[0]}, Longitude: {myPosition[1]}</p>
 
@@ -111,6 +112,7 @@ const MapComponent = () => {
           </Marker>
         ))}
       </MapContainer>
+    </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
 const EditableProfilePage = () => {
     const [user, setUser] = useState({
@@ -41,16 +41,16 @@ const EditableProfilePage = () => {
     };
 
     return (
-        <div className="container mt-5 pt-4">
-            <div className="profile shadow-lg rounded-4 p-4">
-                <h2 className="text-center mb-4">Edit Profile</h2>
+        <div className="container my-5">
+            <div className="profile shadow-lg rounded-4 text-white">
+                <h2 className="text-center mb-2">Edit Profile</h2>
 
                 <div className="text-center mb-4">
                     <img
                         src={imagePreview}
                         alt="User Avatar"
                         className="rounded-circle"
-                        style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                        style={{ width: "130px", height: "130px", objectFit: "cover" }}
                     />
                     <div className="mt-2">
                         <input

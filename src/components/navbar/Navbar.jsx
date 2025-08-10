@@ -12,9 +12,9 @@ const Navbar = () => {
 
 
     <>
-      <nav className="navbar navbar-expand-md bg-body-secondary-emphasis position-fixed  ">
+      <nav className="navbar navbar-expand-md bg-body-secondary-emphasis  ">
         <div className="container-fluid container-lg  my-lg-2 mx-auto">
-          <Link className="navbar-brand" to="/">Automobile</Link>
+          <Link className="navbar-brand" to="/">SpareLink</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -40,22 +40,22 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
-                <a
+                <Link
+                to={"/order-history"}
                   className={`nav-link responsive-text ${activeItem === "History" ? "active " : ""}`}
-                  href="#"
                   onClick={() => handleNavClick("History")}
                 >
                   Orders
-                </a>
+                </Link>
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
-                <a
+                <Link
                   className={`nav-link responsive-text ${activeItem === "Cart" ? "active " : ""}`}
-                  href="#"
+                  to={"/cartpage"}
                   onClick={() => handleNavClick("Contact")}
                 >
                   Cart Page
-                </a>
+                </Link>
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
                 <Link

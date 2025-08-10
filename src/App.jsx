@@ -17,7 +17,8 @@ function App() {
       socket.off("message");
     };
   }, []);
-
+  
+  
   // To test sending data
   // const sendTestMessage = () => {
   //   socket.emit("message", { user: "Frontend", text: "Hello from frontend!" });

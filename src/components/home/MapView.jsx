@@ -56,10 +56,10 @@ const MapView = () => {
   }, []);
 
   return (
-    <div>
-      <div
+    <div className='container my-5 py-5'>
+      <div className='m-auto my-5 py-3'
         ref={mapRef}
-        style={{ width: '100%', height: '400px', border: '1px solid #ccc' }}
+        style={{ width: '100%', height: '500px', border: '1px solid #ccc' }}
       ></div>
     </div>
   );
