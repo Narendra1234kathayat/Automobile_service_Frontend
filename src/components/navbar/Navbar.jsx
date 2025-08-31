@@ -1,18 +1,26 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+
+// redux
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleSidebar } from '../../Store/Slices/SidebarSlice.js';
+import SupplierSidebar from './SupplierSidebar.jsx';
+
 const Navbar = () => {
+  // const isopen = useSelector((state) => state.sidebar.isOpen);
   const [activeItem, setActiveItem] = useState("Home");
   const navigate = useNavigate();
   const handleNavClick = (item) => {
-    setActiveItem(item);  
+    setActiveItem(item);
     // You can add more logic here if needed, like scrolling to a section or changing the view
   };
   return (
 
 
+
     <>
-      <nav className="navbar navbar-expand-md bg-body-secondary-emphasis  ">
+        <nav className="navbar navbar-expand-md bg-body-secondary-emphasis  ">
         <div className="container-fluid container-lg  my-lg-2 mx-auto">
           <Link className="navbar-brand" to="/">SpareLink</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,7 +32,7 @@ const Navbar = () => {
                 <Link
                   to="/"
                   className={`nav-link responsive-text ${activeItem === "Home" ? "active " : ""}`}
-                  
+
                   onClick={() => handleNavClick("Home")}
                 >
                   Home
@@ -41,7 +49,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item mx-lg-2 text-lg-start text-center">
                 <Link
-                to={"/order-history"}
+                  to={"/order-history"}
                   className={`nav-link responsive-text ${activeItem === "History" ? "active " : ""}`}
                   onClick={() => handleNavClick("History")}
                 >
@@ -70,10 +78,10 @@ const Navbar = () => {
 
             <ul className="  list-unstyled navbar-nav ms-lg-auto ms-0 d-flex flex-row justify-content-center">
               <li className="nav-item my-2 my-lg-0">
-                <button className="btn btn-signup me-2" type="button" onClick={()=> navigate('/register')} >Sign Up</button>
+                <button className="btn btn-signup me-2" type="button" onClick={() => navigate('/register')} >Sign Up</button>
               </li>
               <li className="nav-item my-2 my-lg-0">
-                <button className="btn btn-login" type="button" onClick={()=> navigate('/login')}>Login</button>
+                <button className="btn btn-login" type="button" onClick={() => navigate('/login')}>Login</button>
               </li>
             </ul>
           </div>
@@ -81,6 +89,9 @@ const Navbar = () => {
 
         </div>
       </nav >
+      
+      {/* <SupplierSidebar /> */}
+
 
     </>
   )

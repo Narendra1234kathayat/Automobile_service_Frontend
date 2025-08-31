@@ -1,7 +1,7 @@
 import './Login.css'
 const RightSideBanner =()=>{
     return(
- <div className="d-flex flex-column gap-3 text-white" style={{ maxWidth: '500px' }}>
+ <div className="d-lg-flex d-none flex-column gap-3 text-white" style={{ maxWidth: '500px' }}>
 
           {/* Logo and Title */}
           <div className="d-flex align-items-center gap-3">

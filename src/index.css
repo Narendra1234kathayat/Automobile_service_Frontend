@@ -266,3 +266,18 @@ body {
     transform: translateY(0%);
   }
 } 
+
+
+
+
+/* sidebar */
+.sidebar {
+  
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+     margin-left: 0px !important;
+  }
+  
+}

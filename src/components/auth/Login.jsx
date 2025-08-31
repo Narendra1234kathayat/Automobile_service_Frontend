@@ -1,8 +1,8 @@
 import axios from 'axios';
 import './Login.css';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate,Link } from 'react-router-dom';
+import RightSideBanner from './RightSideBanner.jsx';
 function Login() {
  const [email, setEmail] = useState('');
  const [password, setPassword] = useState('');
@@ -98,7 +98,7 @@ function Login() {
           <div className="text-start mt-4">
             <span className="text-light">
               Don’t have an account?{' '}
-              <a href="#" className="text-success text-decoration-none fw-semibold">Sign up</a>
+              <Link to="/register" className="text-success text-decoration-none fw-semibold">Sign up</Link>
             </span>
           </div>
         </div>
