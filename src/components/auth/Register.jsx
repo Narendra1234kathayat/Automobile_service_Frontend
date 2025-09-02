@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance.js";
 import RightSideBanner from "./RightSideBanner.jsx";
 import { FaArrowRight } from "react-icons/fa";
 import RegistrationDetail from "./RegistrationDetail";
@@ -38,15 +38,34 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Registration Successful", form);
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/users/register",
-        form
-      );
-      
+      const payload = {
+        name:form.name,
+        email:form.email,
+        password:form.password,
+        phoneNumber:form.phoneNumber,
+        role:form.role,
+        address:{
+          street:form.street,
+          city:form.city,
+          state:form.state,
+          country:form.country,
+          pincode:form.pincode
+        }
+      }
+      // Add storeName OR workshopName based on role
+      if(form.role === "mechanic"){
+        payload.workShop=form.workshopName;
+      }else if(form.role === "supplier"){
+        payload.storeName=form.garageName;
+      }
+      console.log("Payload:", payload);
+
+      //Handle The API Call Here
+      const response = await axiosInstance.post('/api/users/create-user',payload);
+      console.log("Registration Successful", response);
       if (response.status === 200) {
-        localStorage.setItem("authToken", response.data.token);
-        navigate("/");
+        navigate("/login");
+        
       }
     } catch (error) {
       console.error("Registration Failed", error);
