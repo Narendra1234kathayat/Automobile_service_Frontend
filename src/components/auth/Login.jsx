@@ -3,6 +3,8 @@ import './Login.css';
 import React, { useState } from 'react';
 import { useNavigate,Link } from 'react-router-dom';
 import RightSideBanner from './RightSideBanner.jsx';
+import axiosInstance from '../../utils/axiosInstance.js';
+
 function Login() {
  const [email, setEmail] = useState('');
  const [password, setPassword] = useState('');
@@ -12,31 +14,32 @@ function Login() {
     try {
       e.preventDefault();
       // Handle login logic here, e.g., API call to authenticate user
-      const response=await axios.post('http://localhost:5000/api/v1/users/login', {
-        email,
-        password
-      },{ withCredentials: true } );
+      const response = await axiosInstance.post('/api/users/login',{email,password});
       if (response.status === 200) {
-        
+        const role=response.data.data.roleId.roleName;
+        if(role==='mechanic'){
+          navigate('/');
+        }else if(role==='supplier'){
+          navigate('/supplier');
+        }
         localStorage.setItem('user', JSON.stringify(response.data.data._id)); // Store user data in localStorage
-        localStorage.setItem('authToken', response.data.data.token); // Store token in localStorage
-        // Handle successful login, e.g., redirect or show success message
+       // localStorage.setItem('authToken', response.data.data.token); // Store token in localStorage
         const userId=localStorage.getItem('user');
-        if(userId){}
+          
+        if(userId){
           socket.emit('register', userId);
-        
-        navigate('/'); // Redirect to home or another page after successful login
-
-        
-        console.log('Login successful:', response.data);
+        }
       } else {
         // Handle login error
         console.error('Login failed:', response.data);
       }
     } catch (error) {
       // Handle error, e.g., show error message
-      console.error('Error during login:', error);
       
+      console.error('Error during login:', error);
+      if(error.response.status === 403){
+        alert('Your account is not verified.');
+      }
     }
     
     
