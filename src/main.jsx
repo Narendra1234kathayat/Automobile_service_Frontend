@@ -38,9 +38,9 @@ function Root() {
 
   // Hide Navbar only on /login route
   // const hideNavbarOnPaths = ['/login', '/register', '/supplier'];
-  
+
   // const shouldShowNavbar = !hideNavbarOnPaths.includes(location.pathname);
-   // hide header/footer for login, register and any supplier route
+  // hide header/footer for login, register and any supplier route
   const hideNavbar =
     location.pathname.startsWith("/supplier") ||
     location.pathname === "/login" ||
@@ -53,28 +53,52 @@ function Root() {
 
       <Routes>
         {/* Public routes */}
-        
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
 
         {/* Other public pages */}
-        <Route path="/"  element={
+        <Route path="/" element={
           <ProtectedRoute allowedRole="mechanic">
             <HomeScreen />
           </ProtectedRoute>
 
-        }>
-        <Route path="/brand/:brandName" element={<ProductContainer />} />
-        <Route path="/brand/:brandName/model/:modelName" element={<SparePartsPage />} />
-        <Route path="/product/:productId" element={<ProductPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/spareparts" element={<SparePartsPage />} />
-        <Route path="/location" element={<MapView />} />
-        <Route path="/cartpage" element={<CartPage />} />
-        <Route path="/order-history" element={<OrderHistory />} />
-        <Route path="/store/:storeId" element={<StoreDetail />} />
-        </Route>
+        } />
+        <Route path="/brand/:brandName" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <ProductContainer />
+          </ProtectedRoute>} />
+        <Route path="/brand/:brandName/model/:modelName" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <SparePartsPage />
+          </ProtectedRoute>} />
+        <Route path="/product/:productId" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <ProductPage />
+          </ProtectedRoute>} />
+        <Route path="/profile" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <ProfilePage />
+          </ProtectedRoute>} />
+        <Route path="/spareparts" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <SparePartsPage />
+          </ProtectedRoute>} />
+        <Route path="/location" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <MapView />
+          </ProtectedRoute>} />
+        <Route path="/cartpage" element={<ProtectedRoute allowedRole="mechanic">
+          <CartPage />
+        </ProtectedRoute>} />
+        <Route path="/order-history" element={<ProtectedRoute allowedRole="mechanic">
+          <OrderHistory />
+        </ProtectedRoute>} />
+        <Route path="/store/:storeId" element={<ProtectedRoute allowedRole="mechanic">
+          <StoreDetail />
+        </ProtectedRoute>} />
+
 
         {/* Supplier Protected Routes */}
         <Route
