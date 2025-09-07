@@ -2,9 +2,9 @@ import React from "react";
 
 const Dashboard = () => {
   return (
-    <div className="container mt-4">
+    <div className="container">
       {/* Dashboard Heading */}
-      <h2 className="text-center mb-4">Supplier Dashboard</h2>
+      <h2 className="text-center  text-white mb-4">Supplier Dashboard</h2>
 
       {/* Summary Row */}
       <div className="row text-center">

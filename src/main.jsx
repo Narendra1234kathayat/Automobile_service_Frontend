@@ -6,6 +6,7 @@ import App from './App.jsx';
 import { Provider } from 'react-redux';
 import store from './Store/redux/Store.js';
 
+import ProtectedRoute from './components/protectroute/ProtectedRoute.jsx'
 // src/main.jsx or src/main.tsx
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -30,6 +31,8 @@ import ScrollToTop from './components/scrolltotop/ScrollToTop.jsx';
 import SiderbarLayout from './components/sidebarlayout/SiderbarLayout.jsx';
 import Dashboard from './pages/supplier/Dashboard.jsx';
 import Quotations from './pages/supplier/Quotations.jsx';
+import AddProduct from './pages/supplier/AddProduct.jsx';
+import SupplierProducts from './pages/supplier/SupplierProducts.jsx';
 function Root() {
   const location = useLocation();
 
@@ -45,34 +48,56 @@ function Root() {
 
   return (
     <>
-      {!hideNavbar  && <Navbar />}
+      {!hideNavbar && <Navbar />}
       <ScrollToTop />
-      {/* Main content */}
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/login" element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path="/brand/:brandName" element={<ProductContainer />} />
-        <Route path="brand/:brandName/model/:modelName" element={<SparePartsPage />} />
-        <Route path='/product/:productId' element={<ProductPage />} />
 
+      <Routes>
+        {/* Public routes */}
+        
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
+
+        {/* Other public pages */}
+        <Route path="/"  element={
+          <ProtectedRoute allowedRole="mechanic">
+            <HomeScreen />
+          </ProtectedRoute>
+
+        }>
+        <Route path="/brand/:brandName" element={<ProductContainer />} />
+        <Route path="/brand/:brandName/model/:modelName" element={<SparePartsPage />} />
+        <Route path="/product/:productId" element={<ProductPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/spareparts" element={<SparePartsPage />} />
         <Route path="/location" element={<MapView />} />
-        <Route path='/cartpage' element={<CartPage />} />
+        <Route path="/cartpage" element={<CartPage />} />
         <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/store/:storeId" element={<StoreDetail />} />
-
-        <Route path='/supplier' element={<SiderbarLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path='/supplier/dashboard' element={<Dashboard />} />
-          <Route path='/supplier/profile' element={<ProfilePage/>} />
-          <Route path='/supplier/orders' element={<OrderHistory/>} />  
-          <Route path="/supplier/quotations" element={<Quotations/>} />
         </Route>
 
+        {/* Supplier Protected Routes */}
+        <Route
+          path="/supplier"
+          element={
+            <ProtectedRoute allowedRole="supplier">
+              <SiderbarLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="orders" element={<OrderHistory />} />
+          <Route path="quotations" element={<Quotations />} />
+          <Route path="add-product" element={<AddProduct />} />
+          <Route path="products" element={<SupplierProducts />} />
+        </Route>
       </Routes>
-      {!hideNavbar  && <Footer />}
+
+      {!hideNavbar && <Footer />}
     </>
-  )
+  );
 }
 
 createRoot(document.getElementById('root')).render(

@@ -275,9 +275,39 @@ body {
   
 }
 
-@media (max-width: 768px) {
+@media (max-width: 968px) {
   .sidebar {
      margin-left: 0px !important;
+  }
+  
+}
+
+
+.carousel-control-prev{
+  position: absolute !important;
+  top: -30px !important;
+  left: -90px !important;
+}
+.carousel-control-next{
+  position: absolute !important;
+  right: -90px !important;
+  top: -30px !important;
+}
+
+.outline{
+  border-radius: 20px !important;
+  border: 1px solid #05976A !important;
+}
+@media screen and (max-width: 768px) {
+  .carousel-control-prev{
+    position: absolute !important;
+    top: -30px !important;
+    left: 0px !important;
+  }
+  .carousel-control-next{
+    position: absolute !important;
+    right: 0px !important;
+    top: -30px !important;
   }
   
 }

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-// Dummy data (replace with actual API or props)
 const sampleProduct = {
   id: "sp001",
   name: "Brake Pad Set",
-  description: "High-quality brake pad set suitable for Hyundai Creta.",
+  description:
+    "High-quality brake pad set suitable for Hyundai Creta. Designed for durability and excellent stopping performance in both city and highway conditions. Easy to install and backed with 1-year warranty.",
   brand: "Hyundai",
   model: "Creta",
   price: 1999,
@@ -18,6 +18,29 @@ const sampleProduct = {
     compatibility: "Creta (2018-2023)",
     manufacturer: "AutoParts Ltd.",
   },
+  suppliers: [
+    {
+      id: 1,
+      name: "ABC Motors",
+      contact: "9876543210",
+      email: "abc@motors.com",
+      address: "123 Auto Street, Mumbai",
+    },
+    {
+      id: 2,
+      name: "Speed Parts",
+      contact: "9123456780",
+      email: "sales@speedparts.in",
+      address: "45 Highway Road, Delhi",
+    },
+    {
+      id: 3,
+      name: "PowerMax Distributors",
+      contact: "9988776655",
+      email: "info@powermax.com",
+      address: "88 SpareHub Lane, Bangalore",
+    },
+  ],
 };
 
 const ProductPage = () => {
@@ -25,33 +48,70 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    setProduct(sampleProduct); // Simulate API fetch
+    setProduct(sampleProduct);
   }, [productId]);
 
-  if (!product) return <div style={{ color: "#f1f5f9" }}>Loading...</div>;
+  if (!product) return <div style={{ color: "#f8f9fa" }}>Loading...</div>;
 
+  // Dark theme styles
+  const headingStyle = { color: "#f8f9fa" }; // white
+  const subTextStyle = { color: "#adb5bd" }; // muted gray
+  const labelStyle = { color: "#ced4da" }; // light gray
+  const priceStyle = {
+    color: "#f8f9fa",
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+  };
 
+  // Send quotation request
+  const sendQuotationRequest = async (supplier) => {
+    const quotationData = {
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      brand: product.brand,
+      model: product.model,
+      supplierId: supplier.id,
+      supplierName: supplier.name,
+      supplierEmail: supplier.email,
+      supplierContact: supplier.contact,
+      supplierAddress: supplier.address,
+      requestedBy: "user123",
+    };
 
-  const headingStyle = { color: "#fbbf24" };
-  const subTextStyle = { color: "#d1d5db" };
-  const labelStyle = { color: "#93c5fd" };
-  const priceStyle = { color: "#34d399", fontSize: "1.5rem", fontWeight: "bold" };
+    try {
+      const response = await fetch("http://localhost:5000/api/quotations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(quotationData),
+      });
+
+      if (response.ok) {
+        alert(`Quotation request sent to ${supplier.name}!`);
+      } else {
+        alert("Failed to send quotation request.");
+      }
+    } catch (err) {
+      console.error("Error sending quotation:", err);
+      alert("Something went wrong. Try again!");
+    }
+  };
 
   return (
-    <div className="container white my-5" >
-      <div className="row  ">
+    <div className="container my-5 p-4 rounded" >
+      <div className="row mb-5">
         {/* Product Image */}
         <div className="col-md-6">
           <img
-            src={'https://media.istockphoto.com/id/526209999/photo/auto-parts.jpg?s=612x612&w=0&k=20&c=yXvzy425jTHSTKWxd7XCdIuh9zLLnTfNHD1jrRCwkrk='}
+            src={product.image}
             alt={product.name}
-            className="img-fluid rounded shadow"
+            className="img-fluid shadow"
             style={{ width: "100%", borderRadius: "1rem" }}
           />
         </div>
 
         {/* Product Info */}
-        <div className="col-md-6" style={{ paddingLeft: "2rem" }}>
+        <div className="col-md-6 text-white" style={{ paddingLeft: "2rem" }}>
           <h2 style={headingStyle}>{product.name}</h2>
           <p style={subTextStyle}>{product.description}</p>
           <p style={priceStyle}>₹{product.price}</p>
@@ -63,48 +123,49 @@ const ProductPage = () => {
 
           <p>
             <span style={labelStyle}>Availability:</span>{" "}
-            {product.available ? (
-              <span style={{ color: "#10b981" }}>In Stock</span>
-            ) : (
-              <span style={{ color: "#ef4444" }}>Out of Stock</span>
-            )}
+            {product.available ? "In Stock" : "Out of Stock"}
           </p>
 
           <p>
             <span style={labelStyle}>Delivery:</span> {product.delivery}
           </p>
 
-          <button
-            className="btn btn-warning mt-3"
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#fbbf24",
-              color: "#111827",
-              fontWeight: "bold",
-              border: "none",
-              borderRadius: "0.5rem",
-            }}
+          <div className="d-flex align-items-center gap-3">
+            <button
+            className="btn btn-primary "
             disabled={!product.available}
             onClick={() => alert("Added to cart!")}
           >
             Add to Cart
           </button>
+          <a className="text-white " href="#supplier">View All Suppliers</a>
+          </div>
+        </div>
+      </div>
+
+      {/* ✅ Description Section */}
+      <div className="row mb-lg-4 mb-2">
+        <div className="col-12">
+          <h4 style={headingStyle}>Product Description</h4>
+          <p style={subTextStyle} className="mt-2">
+            {product.description}
+          </p>
         </div>
       </div>
 
       {/* Specifications */}
       <div className="row ">
         <div className="col-12">
-          <h4 style={{ color: "#60a5fa" }}>Specifications</h4>
+          <h4 style={headingStyle}>Specifications</h4>
           <ul className="list-group">
             {Object.entries(product.specifications).map(([key, value], i) => (
               <li
                 key={i}
                 className="list-group-item"
                 style={{
-                  backgroundColor: "#1f2937",
-                  borderColor: "#374151",
-                  color: "#e5e7eb",
+                  backgroundColor: "#2c3136",
+                  borderColor: "#3d444a",
+                  color: "#e9ecef",
                 }}
               >
                 <strong style={labelStyle}>
@@ -115,6 +176,36 @@ const ProductPage = () => {
             ))}
           </ul>
         </div>
+      </div>
+
+      {/* Suppliers */}
+      <div className="row my-3" id="supplier" >
+        <div className="col-12">
+          <h4 style={headingStyle} className="my-3">Suppliers</h4>
+        </div>
+        {product.suppliers.map((sup) => (
+          <div key={sup.id} className="col-lg-4 col-sm-6 mb-4">
+            <div
+              className="card h-100 rounded-3 shadow"
+              style={{ backgroundColor: "#2c3136", border: "1px solid #3d444a" }}
+            >
+              <div className="card-body text-white">
+                <h5 className="fw-bold">{sup.name}</h5>
+                <p className="mb-2" style={{ color: "#adb5bd" }}>
+                  📍 {sup.address} <br />
+                  📞 {sup.contact} <br />
+                  ✉️ {sup.email}
+                </p>
+                <button
+                  className="btn btn-success w-100 mt-auto"
+                  onClick={() => sendQuotationRequest(sup)}
+                >
+                  Request Quotation
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

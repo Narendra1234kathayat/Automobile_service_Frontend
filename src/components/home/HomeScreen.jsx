@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import MapComponent from '../map/MapComponent.jsx';
 import StoreContainer from './StoreContainer.jsx';
 import HeroSection from './HeroSection.jsx';
+import SpareParts from './SpareParts.jsx';
 function getAuthToken() {
   return localStorage.getItem('authToken');
 }
@@ -20,31 +21,7 @@ const HomeScreen = () => {
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    const token = getAuthToken();
-    if (!token) {
-      setAuthError(true);
-      setLoading(false);
-      return;
-    }
-
-    axios.get('http://localhost:5000/api/v1/users/getallusers', {
-
-      withCredentials: true, // To include cookies if needed
-    })
-      .then(response => {
-        const allUsers = response.data.users || []; // axios gives parsed data directly
-        setUsers(allUsers);
-        setFilteredUsers(allUsers);
-        setLoading(false);
-      })
-      .catch(error => {
-        if (error.response && error.response.status === 401) {
-          setAuthError(true);
-        }
-        setLoading(false);
-      });
-  }, []);
+  
 
 
   const handleRoleFilter = (e) => {
@@ -57,8 +34,7 @@ const HomeScreen = () => {
     }
   };
 
-  if (loading) return <div className="text-center h-100 d-flex justify-content-center align-content-center white">Loading users...</div>;
-  if (authError) return <div className="alert alert-danger text-center mt-5">Please log in to see users.</div>;
+ 
 
   return (
     <div className="container mt-1 mt-auto">
@@ -108,30 +84,13 @@ const HomeScreen = () => {
 
         </div>
       </div>
-      <p className="text-white  display-5">Popular Brands</p>
+      <SpareParts/>
+      <p className="text-white fs-1">Popular Brands</p>
       <div className="d-flex overflow-auto " style={{ whiteSpace: 'nowrap' }}>
         <CategoryContainer />
       </div>
 
-      {/* User Cards */}
-      <div className="row ">
-        {filteredUsers.length > 0 ? (
-          filteredUsers.map(user => (
-            <div className="col-md-4 mb-3" key={user._id}>
-              <div className="card h-100 shadow-sm">
-                <div className="card-body">
-                  <h5 className="card-title">{user.name}</h5>
-                  <p className="card-text"><strong>Email:</strong> {user.email}</p>
-                  <p className="card-text"><strong>Phone:</strong> {user.phone}</p>
-                  <p className="card-text"><strong>Role:</strong> {user.role}</p>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="alert alert-warning">No users found.</div>
-        )}
-      </div>
+      
       <div className='row'>
 
         <StoreContainer />

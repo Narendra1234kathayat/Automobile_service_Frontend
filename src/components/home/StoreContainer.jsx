@@ -26,24 +26,29 @@ const StoreScroller = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="row gap-3  py-2">
+    <div className="row  py-3 ">
+      <h1 className="text-white fs-1">Stores</h1>
       {stores.map((store) => (
-        <div
-          key={store.id}
-          className=" col-md-3 my-3 border rounded shadow-sm text-white shop-container bg-dark"
-          style={{ minWidth: "220px", minHeight: "120px", flex: "0 0 auto", cursor: "pointer" }}
-          onClick={() => navigate(`/store/${store.id}`)}
-        >
-          <div className="d-flex align-items-center p-2">
-            <img
-              src="src/assets/shop.png"
-              alt={store.name}
-              style={{ height: "80px", width: "80px", objectFit: "cover" }}
-              className="me-3 rounded"
-            />
-            <div>
-              <p className="fw-bold mb-1 fs-5">{store.name}</p>
-              <p className="mb-0">{store.city}</p>
+        <div className="col-md-4 col-sm-6 my-3">
+          <div
+            key={store.id}
+            className="  border rounded shadow-sm text-white shop-container bg-dark"
+            style={{ height: "120px", flex: "0 0 auto", cursor: "pointer" }}
+            onClick={() => navigate(`/store/${store.id}`)}
+          >
+            <div className="d-flex align-items-center p-2 my-2 ">
+              <img
+                src="src/assets/shop.png"
+                alt={store.name}
+                style={{ height: "80px", width: "80px", objectFit: "cover" }}
+                className="me-3 rounded"
+              />
+              <div>
+                <p className="fw-bold mb-lg-1 fs-xl-1 fs-6">
+                  {store.name.length > 10 ? store.name.substring(0, 10) + "..." : store.name}
+                </p>
+                <p className="mb-0">{store.city}</p>
+              </div>
             </div>
           </div>
         </div>

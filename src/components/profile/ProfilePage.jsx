@@ -107,16 +107,7 @@ const EditableProfilePage = () => {
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-                        <div className="col-12">
-                            <label className="form-label fw-bold">Password (Hashed)</label>
-                            <input
-                                type="text"
-                                name="password"
-                                value={user.password}
-                                className="form-control"
-                                onChange={handleChange}
-                            />
-                        </div>
+                        
                     </div>
 
                     <div className="text-center mt-4">

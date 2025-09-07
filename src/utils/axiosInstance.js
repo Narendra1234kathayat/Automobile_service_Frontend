@@ -1,11 +1,15 @@
 import axios from "axios";
 
+
+export const BASE_URL = "http://localhost:5000/"; // Replace with your backend base URL
 // Create axios instance
 const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/", // Replace with your backend base URL
   timeout: 5000,
+  
   headers: {
     "Content-Type": "application/json",
+    
   },
 });
 
@@ -38,7 +42,7 @@ axiosInstance.interceptors.response.use(
 
     if (error.response?.status === 401) {
       // Token expired or unauthorized
-      alert("Session expired. Please log in again.");
+      // alert("Session expired. Please log in again. 
       localStorage.removeItem("token");
       window.location.href = "/login";
     }

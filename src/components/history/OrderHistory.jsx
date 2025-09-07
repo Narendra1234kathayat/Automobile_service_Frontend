@@ -116,7 +116,7 @@ const OrderHistory = () => {
 
       {/* Charts Section */}
       <div className="row  g-4">
-        <div className="col-lg-6">
+        <div className=" col-md-6">
           <div className="card shadow-sm p-3 h-100">
             <h5 className="mb-3 text-center">Quantity Purchased by Product</h5>
             <div style={{ height: "270px" }}>
@@ -125,7 +125,7 @@ const OrderHistory = () => {
           </div>
         </div>
 
-        <div className="col-lg-6">
+        <div className="col-md-6 ">
           <div className="card shadow-sm p-3 h-100">
             <h5 className="mb-3 text-center">Spending Distribution by Product</h5>
             <div style={{ height: "270px" }}>
@@ -134,7 +134,7 @@ const OrderHistory = () => {
           </div>
         </div>
 
-        <div className="col">
+        <div className="col-12 ">
           <div className="card shadow-sm p-3 h-100">
             <h5 className="mb-3 text-center">Quantity Trend Over Time</h5>
             <div style={{ height: "300px" }}>

@@ -1,50 +1,54 @@
 import axios from 'axios';
 import './Login.css';
 import React, { useState } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import RightSideBanner from './RightSideBanner.jsx';
 import axiosInstance from '../../utils/axiosInstance.js';
-
+import Cookies from 'js-cookie';
+// import  SocketUser  from '../../socket/SocketUser.js';
 function Login() {
- const [email, setEmail] = useState('');
- const [password, setPassword] = useState('');
- const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     try {
       e.preventDefault();
       // Handle login logic here, e.g., API call to authenticate user
-      const response = await axiosInstance.post('/api/users/login',{email,password});
+      const response = await axiosInstance.post('/api/users/login', { email, password },
+        { withCredentials: true }
+      );
       if (response.status === 200) {
-        const role=response.data.data.roleId.roleName;
-        if(role==='mechanic'){
+        const role = response.data.data.roleId.roleName;
+        if (role === 'mechanic') {
           navigate('/');
-        }else if(role==='supplier'){
+        } else if (role === 'supplier') {
           navigate('/supplier');
         }
+        
+        localStorage.setItem('token', response.data.authtoken); // Store token in localStorage
         localStorage.setItem('user', JSON.stringify(response.data.data._id)); // Store user data in localStorage
-       // localStorage.setItem('authToken', response.data.data.token); // Store token in localStorage
-        const userId=localStorage.getItem('user');
-          
-        if(userId){
-          socket.emit('register', userId);
-        }
+        localStorage.setItem('role', JSON.stringify(response.data.data.roleId.roleName)); // Store user data in localStorage
+        // localStorage.setItem('authToken', response.data.data.token); // Store token in localStorage
+        const userId = localStorage.getItem('user');
+
+        // if(userId){
+        //   SocketUser.emit('register', userId);
+        // }
       } else {
         // Handle login error
         console.error('Login failed:', response.data);
       }
     } catch (error) {
       // Handle error, e.g., show error message
+
+      console.log('Error during login:', error);
       
-      console.error('Error during login:', error);
-      if(error.response.status === 403){
-        alert('Your account is not verified.');
-      }
     }
-    
-    
+
+
   };
- 
+
   return (
     <div className="row vh-100 w-100 ">
 
@@ -110,7 +114,7 @@ function Login() {
 
       {/* Right Side Of Page */}
       <div className="col-lg-6 col-12  align-items-center justify-content-lg-start justify-content-center d-lg-flex d-none rightside-bg p-5">
-        <RightSideBanner/>
+        <RightSideBanner />
       </div>
 
     </div>
