@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 const EditableProfilePage = () => {
     const [user, setUser] = useState({
+        _id: "USER_ID_HERE",  // 🔑 Replace with logged-in user’s id (from JWT or context)
         name: "Narendra",
         email: "nskservice@gmail.com",
-        password: "$2b$10$YeeoD.ki0u/3qahiMGhXhulyQA/d80bzhDjyS8Rp02frY2pi0Fcvu",
         phone: "9157312511",
         role: "service-provider",
     });
@@ -27,16 +28,40 @@ const EditableProfilePage = () => {
         const file = e.target.files[0];
         if (file) {
             setImage(file);
-            setImagePreview(URL.createObjectURL(file)); // Live preview
+            setImagePreview(URL.createObjectURL(file));
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Updated user:", user);
-        if (image) {
-            console.log("Selected image:", image.name);
-            // You'd typically use FormData and send it to your backend here
+        try {
+            // Prepare data
+            const formData = new FormData();
+            formData.append("name", user.name);
+            formData.append("email", user.email);
+            formData.append("phoneNumber", user.phone);
+            formData.append("role", user.role);
+            if (image) formData.append("image", image);
+
+            // Call API
+            const token = localStorage.getItem("authtoken"); // JWT stored at login
+            const res = await axiosInstance.put(
+                `api/users/update-user/${user._id}`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            alert(res.data.message);
+            setUser(res.data.data);
+        } catch (error) {
+            console.error("Update failed:", error.response?.data || error.message);
+            alert(error.response?.data?.message || "Something went wrong!");
         }
     };
 
@@ -107,7 +132,6 @@ const EditableProfilePage = () => {
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-                        
                     </div>
 
                     <div className="text-center mt-4">
