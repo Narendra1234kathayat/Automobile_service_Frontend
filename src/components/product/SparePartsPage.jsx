@@ -1,30 +1,19 @@
-import React, { useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
-const spareParts = [
-  { id: 1, name: "Front Brake Pad", category: "Brakes", image: "https://m.media-amazon.com/images/I/81hf68N2GkL._SL1500_.jpg", price: "₹1,200", availability: "In Stock" },
-  { id: 2, name: "Rear Brake Pad", category: "Brakes", image: "https://m.media-amazon.com/images/I/61E6B06uA7L._SL1500_.jpg", price: "₹1,050", availability: "Out of Stock" },
-  { id: 3, name: "Air Filter", category: "Filters", image: "https://m.media-amazon.com/images/I/81T80ibn2HL._SL1500_.jpg", price: "₹450", availability: "In Stock" },
-  { id: 4, name: "Oil Filter", category: "Filters", image: "https://m.media-amazon.com/images/I/71+H9H80YvL._SL1500_.jpg", price: "₹350", availability: "In Stock" },
-  { id: 5, name: "Clutch Plate", category: "Clutch", image: "https://m.media-amazon.com/images/I/91rDHM8ZQCL._SL1500_.jpg", price: "₹2,800", availability: "Limited Stock" },
-  { id: 6, name: "Fan Belt", category: "Engine", image: "https://m.media-amazon.com/images/I/71Jz4fX2BvL._SL1500_.jpg", price: "₹600", availability: "In Stock" },
-  { id: 7, name: "Timing Belt", category: "Engine", image: "https://m.media-amazon.com/images/I/81LK3K-r2fL._SL1500_.jpg", price: "₹950", availability: "Out of Stock" },
-];
-
-// Categories from spareParts
-const categories = ["All", ...new Set(spareParts.map((p) => p.category))];
-const brands = ["Hyundai", "Tata", "Maruti", "Honda"];
-const models = {
-  Hyundai: ["Creta", "i20", "Verna"],
-  Tata: ["Nexon", "Altroz", "Harrier"],
-  Maruti: ["Swift", "Baleno", "Dzire"],
-  Honda: ["City", "Amaze", "Jazz"],
-};
-const variants = ["Petrol", "Diesel", "CNG", "Electric"];
+// Variants (static for now, in lowercase)
+const variants = ["petrol", "diesel", "cng", "electric"];
 
 const SparePartsPage = () => {
-  const { brandName, modelName } = useParams(); 
+  const { brandName, modelName } = useParams();
   const navigate = useNavigate();
+
+  const [categories, setCategories] = useState(["All"]);
+  const [spareParts, setSpareParts] = useState([]);
+
+  const [brands, setBrands] = useState([]);
+  const [models, setModels] = useState([]);
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedBrand, setSelectedBrand] = useState("");
@@ -32,16 +21,119 @@ const SparePartsPage = () => {
   const [selectedVariant, setSelectedVariant] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // ✅ Fetch Categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axiosInstance.get("/api/category/get-category");
+        setCategories(["All", ...res.data.data.map((cat) => cat.name)]);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // ✅ Fetch Brands
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const res = await axiosInstance.get("/api/car-brand/get-brand");
+        setBrands(res.data.data);
+      } catch (err) {
+        console.error("Error fetching brands:", err);
+      }
+    };
+    fetchBrands();
+  }, []);
+
+  // ✅ Fetch Models (on brand change)
+  const fetchModels = async (brandId) => {
+    try {
+      const res = await axiosInstance.get(`/api/car-model/get-carmodel/${brandId}`);
+      setModels(res.data.data);
+      return res.data.data;
+    } catch (err) {
+      console.error("Error fetching models:", err);
+      return [];
+    }
+  };
+
+  // ✅ Auto select Brand & Model from params
+  useEffect(() => {
+    if (brandName && brands.length > 0) {
+      const brand = brands.find(
+        (b) => b.name.toLowerCase() === brandName.toLowerCase()
+      );
+      if (brand) {
+        setSelectedBrand(brand._id);
+        fetchModels(brand._id).then((modelsList) => {
+          if (modelName && modelsList.length > 0) {
+            const model = modelsList.find(
+              (m) => m.carModel.toLowerCase() === modelName.toLowerCase()
+            );
+            if (model) {
+              setSelectedModel(model._id);
+            }
+          }
+        });
+      }
+    }
+  }, [brandName, modelName, brands]);
+
+  // ✅ Fetch Spare Parts
+  useEffect(() => {
+    const fetchSpareParts = async () => {
+      try {
+        const res = await axiosInstance.get("/api/spare-part/spare-parts/mechanic");
+        setSpareParts(res.data.data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
+    fetchSpareParts();
+  }, []);
+
   const handleCategoryClick = (category) => setSelectedCategory(category);
+
+  // ✅ Reset Filters
+  const handleResetFilters = () => {
+    setSelectedCategory("All");
+    setSelectedBrand("");
+    setSelectedModel("");
+    setSelectedVariant("");
+    setSearchTerm("");
+    setModels([]); // reset models dropdown
+  };
 
   // ✅ Filtering spare parts
   const filteredParts = spareParts.filter((part) => {
     const matchesCategory =
-      selectedCategory === "All" || part.category === selectedCategory;
+      selectedCategory === "All" || part.categoryId?.name === selectedCategory;
+
     const matchesSearch = part.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+
+    const matchesBrand =
+      !selectedBrand || part.brandId?.some((b) => b._id === selectedBrand);
+
+    const matchesModel =
+      !selectedModel || part.modelId?.some((m) => m._id === selectedModel);
+
+    const matchesVariant =
+      !selectedVariant ||
+      part.variant?.some(
+        (v) => v.toLowerCase() === selectedVariant.toLowerCase()
+      );
+
+    return (
+      matchesCategory &&
+      matchesSearch &&
+      matchesBrand &&
+      matchesModel &&
+      matchesVariant
+    );
   });
 
   return (
@@ -49,7 +141,6 @@ const SparePartsPage = () => {
       className="container py-5"
       style={{ backgroundColor: "#111828", minHeight: "100vh", color: "#f1f1f1" }}
     >
-      {/* ✅ Dynamic Title */}
       <h2 className="text-center mb-4 text-light">
         {brandName && modelName
           ? `Spare Parts for ${brandName} ${modelName}`
@@ -57,9 +148,9 @@ const SparePartsPage = () => {
       </h2>
 
       {/* Filter Controls */}
-      <div className="row mb-4">
+      <div className="row mb-4 ">
         {/* Search Input */}
-        <div className="col-md-4 mb-2">
+        <div className="col-md-4 col-sm-6 mb-2">
           <input
             type="text"
             className="form-control bg-dark text-light border-secondary"
@@ -69,28 +160,32 @@ const SparePartsPage = () => {
           />
         </div>
 
-        {/* Show Brand/Model/Variant dropdowns only if NO brandName/modelName in route */}
+        {/* Brand / Model / Variant dropdowns (only if not in URL params) */}
         {!brandName && !modelName && (
           <>
-            <div className="col-md-4 mb-2">
+            {/* Brand */}
+            <div className="col-md-4 col-sm-6 mb-2">
               <select
                 className="form-select bg-dark text-light border-secondary"
                 value={selectedBrand}
                 onChange={(e) => {
-                  setSelectedBrand(e.target.value);
+                  const brandId = e.target.value;
+                  setSelectedBrand(brandId);
                   setSelectedModel("");
+                  fetchModels(brandId);
                 }}
               >
                 <option value="">🚘 Select Brand</option>
-                {brands.map((brand, i) => (
-                  <option key={i} value={brand}>
-                    {brand}
+                {brands.map((brand) => (
+                  <option key={brand._id} value={brand._id}>
+                    {brand.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="col-md-4 mb-2">
+            {/* Model */}
+            <div className="col-md-4 col-sm-6 mb-2">
               <select
                 className="form-select bg-dark text-light border-secondary"
                 value={selectedModel}
@@ -98,16 +193,16 @@ const SparePartsPage = () => {
                 disabled={!selectedBrand}
               >
                 <option value="">🚗 Select Model</option>
-                {selectedBrand &&
-                  models[selectedBrand]?.map((model, i) => (
-                    <option key={i} value={model}>
-                      {model}
-                    </option>
-                  ))}
+                {models.map((model) => (
+                  <option key={model._id} value={model._id}>
+                    {model.carModel}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div className="col-md-4 mb-2">
+            {/* Variant */}
+            <div className="col-md-4 col-sm-6 mb-2">
               <select
                 className="form-select bg-dark text-light border-secondary"
                 value={selectedVariant}
@@ -116,13 +211,23 @@ const SparePartsPage = () => {
                 <option value="">🔧 Select Variant</option>
                 {variants.map((variant, i) => (
                   <option key={i} value={variant}>
-                    {variant}
+                    {variant.charAt(0).toUpperCase() + variant.slice(1)}
                   </option>
                 ))}
               </select>
             </div>
           </>
         )}
+
+        {/* Reset Filters Button */}
+        <div className="col-md-4  mb-2">
+          <button
+            className="btn bg-dark text-light border-secondary  w-100"
+            onClick={handleResetFilters}
+          >
+            ❌ Remove Filters
+          </button>
+        </div>
       </div>
 
       {/* Category Buttons */}
@@ -144,14 +249,14 @@ const SparePartsPage = () => {
       <div className="row">
         {filteredParts.length > 0 ? (
           filteredParts.map((part) => (
-            <div className="col-sm-6 col-lg-3 col-md-4 mb-2" key={part.id}>
+            <div className="col-sm-6 col-lg-3 col-md-4 mb-2" key={part._id}>
               <div
                 className="card bg-dark text-light border-secondary shadow-sm h-100"
-                onClick={() => navigate(`/product/${part.id}`)}
+                onClick={() => navigate(`/product/${part._id}`)}
                 style={{ cursor: "pointer" }}
               >
                 <img
-                  src={part.image}
+                  src={BASE_URL + part.image}
                   className="card-img-top"
                   alt={part.name}
                   style={{ height: "180px", objectFit: "cover" }}
@@ -159,7 +264,7 @@ const SparePartsPage = () => {
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title">{part.name}</h5>
                   <p className="card-text mb-1">
-                    <strong>Category:</strong> {part.category}
+                    <strong>Category:</strong> {part.categoryId?.name}
                   </p>
                   <p className="card-text mb-1">
                     <strong>Price:</strong> {part.price}

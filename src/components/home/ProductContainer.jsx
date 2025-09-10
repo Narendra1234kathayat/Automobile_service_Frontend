@@ -1,34 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { carBrands } from "./CategoryContainer.jsx"; // Adjust as necessary
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
 const ProductContainer = () => {
   const { brandName } = useParams();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [models, setModels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // Fetch brand models from API
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        setLoading(true);
+        const res = await axiosInstance.get(
+          `/api/car-model/get-car-model/${brandName}` // Adjust according to your backend route
+        );
+        if(res.status !== 200) {
+          throw new Error(res.data.message || "Failed to fetch models");
+        }
+        
+        
+        setModels(res.data.data || []);
+        setError("");
+      } catch (err) {
+        console.log("Error fetching models:", err);
+        setError("No models under this brand found...");
+        setModels([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const selectedBrand = carBrands.find(
-    (brand) => brand.brand.toLowerCase() === brandName.toLowerCase()
-  );
+    fetchModels();
+  }, [brandName]);
 
-  if (!selectedBrand) {
+  if (loading) {
     return (
-      <div className="container mt-5">
-        <h3 className="text-danger">Brand not found!</h3>
+      <div className="container mt-5 text-center text-white">
+        <h4>Loading...</h4>
       </div>
     );
   }
-  // console.log("Selected Brand:", selectedBrand.models);
-  const filteredModels = selectedBrand.models.filter((model) =>
-    // console.log("Model:", model),
-    model.toLowerCase().includes(search.toLowerCase())
-  );
+
+  if (error || models.length === 0) {
+    return (
+      <div className="container mt-5 text-center">
+        <h3 className="text-white">{error || "No models found"}</h3>
+      </div>
+    );
+  }
+
+  // Apply search filter on carModel field
+const filteredModels = models.filter(
+  (model) =>
+    model.carModel &&
+    model.carModel.toLowerCase().includes(search.toLowerCase())
+);
+
 
   return (
     <div className="container py-5">
-      <h2 className="text-center mb-4 white">{selectedBrand.brand} Models</h2>
+      <h2 className="text-center mb-4 text-white">
+        {brandName} Models
+      </h2>
 
+      {/* Search Bar */}
       <div className="input-group mb-4">
         <input
           type="text"
@@ -40,32 +79,39 @@ const ProductContainer = () => {
       </div>
 
       <div className="row">
-        {filteredModels.map((model, i) => (
-          <div className="col-lg-3 col-md-4 col-sm-6 mb-4"  key={i}>
+        {filteredModels.map((model) => (
+          <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={model._id}>
             <div
-              className="card h-100 border  shadow-sm"
-              style={{ cursor: "pointer",backgroundColor:"transparent" }}
+              className="card h-100 border shadow-sm"
+              style={{ cursor: "pointer", backgroundColor: "transparent" }}
               onClick={() =>
-                // navigate(`/model/${model}/brand/${selectedBrand.brand}`)
-                 navigate(`/brand/${selectedBrand.brand}/model/${model}`)
+                navigate(`/brand/${brandName}/model/${model.carModel}`)
               }
             >
               <img
-                src="https://imgd.aeplcdn.com/370x208/n/cw/ec/106815/creta-exterior-right-front-three-quarter-5.jpeg?isig=0"
+                src={
+                  model.carModelImage
+                    ? `${BASE_URL}${model.carModelImage}`
+                    : "https://via.placeholder.com/300x200?text=No+Image"
+                }
                 className="card-img-top"
-                alt={model.name}
-                style={{ height: "auto", objectFit: "cover" }}
+                alt={model.carModel}
+                style={{ height: "200px", objectFit: "cover" }}
               />
               <div className="card-body d-flex align-items-center justify-content-center">
-                <h5 className="card-title text-center  fw-bold" style={{color:"white"}}>
-                  {model}
+                <h5
+                  className="card-title text-center fw-bold"
+                  style={{ color: "white" }}
+                >
+                  {model.carModel}
                 </h5>
               </div>
             </div>
           </div>
         ))}
+
         {filteredModels.length === 0 && (
-          <div className="col-12 text-center text-muted ">No model found.</div>
+          <div className="col-12 text-center text-muted">No model found.</div>
         )}
       </div>
     </div>
