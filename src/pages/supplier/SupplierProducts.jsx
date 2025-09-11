@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance.js"; // your axios setup
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance.js"; // your axios setup
 
 const SupplierProducts = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const SupplierProducts = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      await axiosInstance.delete(`/api/spareparts/${id}`);
+      await axiosInstance.delete(`/api/spare-part/delete-spare-part/supplier/${id}`);
       setProducts(products.filter((p) => p._id !== id));
       alert("Product deleted successfully");
     } catch (err) {
@@ -77,7 +77,7 @@ const SupplierProducts = () => {
               <div className="card h-100 shadow border-0">
                 {p.image && (
                   <img
-                    src={`/uploads/${p.image}`} // adjust to your backend static path
+                    src={BASE_URL+"/"+p.image} // adjust to your backend static path
                     className="card-img-top"
                     alt={p.name}
                     style={{ height: "180px", objectFit: "cover" }}
@@ -99,7 +99,7 @@ const SupplierProducts = () => {
                     {/* Multiple models */}
                     <li>
                       <strong>Models:</strong>{" "}
-                      {p.modelId?.map((m) => m.name).join(", ")}
+                      {p.modelId?.map((m) => m.carModel).join(", ")}
                     </li>
 
                     {/* Multiple variants */}
