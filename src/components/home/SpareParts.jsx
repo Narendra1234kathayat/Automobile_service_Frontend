@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
 const SpareParts = () => {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ const SpareParts = () => {
                         onClick={() => handleProductClick(part.id)}
                       >
                         <img
-                          src={part.image || "https://via.placeholder.com/200?text=No+Image"}
+                          src={`${BASE_URL}${part.image} `|| "https://via.placeholder.com/200?text=No+Image"}
                           className="card-img-top rounded-top-4 img-fluid"
                           alt={part.name}
                           style={{ height: "150px", objectFit: "cover" }}
