@@ -44,3 +44,46 @@
 
 
 
+/* Login.css - Add these responsive styles */
+.leftside-bg {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  min-height: 100vh;
+}
+
+.rightside-bg {
+  background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+  min-height: 100vh;
+}
+
+/* Mobile optimizations */
+@media (max-width: 991.98px) {
+  .leftside-bg {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  
+  .form-control {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+@media (max-width: 575.98px) {
+  .leftside-bg {
+    padding: 1rem 0.5rem;
+  }
+  
+  .px-4 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* Toast responsive positioning */
+@media (max-width: 575.98px) {
+  .Toastify__toast-container {
+    width: calc(100vw - 2rem);
+    left: 1rem;
+    right: 1rem;
+    margin: 0;
+  }
+}

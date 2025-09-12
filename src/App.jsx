@@ -1,5 +1,6 @@
 import './App.css';
 import './index.css';
+import { ToastContainer, toast } from 'react-toastify';
 import Navbar from './components/navbar/Navbar';
 import Login from './components/auth/Login';
 
@@ -30,6 +31,20 @@ function App() {
       <div className=' position-relative mainbox w-100 mt-5'>
         {/* <Navbar/>
         <Login/> */}
+         {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        zindex={99999999}
+        theme="dark"
+      />
         <button onClick={sendTestMessage} className="btn btn-primary m-3">Send Test Message</button>
         <div className="messages">  
           {messages.map((msg, index) => (

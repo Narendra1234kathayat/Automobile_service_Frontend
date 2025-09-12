@@ -2,6 +2,8 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // react redux
 import { Provider } from 'react-redux';
 import store from './Store/redux/Store.js';
@@ -48,6 +50,19 @@ function Root() {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ zIndex: 9999 }}
+      />
       {!hideNavbar && <Navbar />}
       <ScrollToTop />
 

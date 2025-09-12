@@ -1,100 +1,320 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
 const SpareParts = () => {
   const navigate = useNavigate();
   const [spareParts, setSpareParts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState({});
 
-  const fetchspareparts = async () => {
+  // Responsive breakpoints for the carousel
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1200 },
+      items: 4,
+      slidesToSlide: 4
+    },
+    desktop: {
+      breakpoint: { max: 1200, min: 992 },
+      items: 3,
+      slidesToSlide: 3
+    },
+    tablet: {
+      breakpoint: { max: 992, min: 768 },
+      items: 2,
+      slidesToSlide: 2
+    },
+    mobile: {
+      breakpoint: { max: 768, min: 0 },
+      items: 1,
+      slidesToSlide: 1
+    }
+  };
+
+  const fetchSpareparts = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get("/api/spare-part/spare-parts/mechanic");
       setSpareParts(response.data.data || []);
     } catch (error) {
       console.error("Error fetching spare parts:", error);
+      toast.error("Failed to load spare parts. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchspareparts();
+    fetchSpareparts();
   }, []);
 
-  const handleProductClick = (id) => {
-    navigate(`/product/${id}`);
+  const handleProductClick = (part) => {
+    const productId = part.id || part._id;
+    if (productId) {
+      navigate(`/product/${productId}`);
+    } else {
+      toast.error("Product details not available");
+    }
   };
+
+  const handleImageError = (partId) => {
+    setImageErrors(prev => ({
+      ...prev,
+      [partId]: true
+    }));
+  };
+
+  const getImageSrc = (part) => {
+    const partId = part.id || part._id;
+    
+    if (imageErrors[partId]) {
+      return "https://via.placeholder.com/200x150/6c757d/ffffff?text=No+Image";
+    }
+    
+    if (part.image) {
+      if (part.image.startsWith('http')) {
+        return part.image;
+      }
+      return `${BASE_URL}${part.image}`;
+    }
+    
+    return "https://via.placeholder.com/200x150/28a745/ffffff?text=Spare+Part";
+  };
+
+  const formatPrice = (price) => {
+    if (!price) return "Price not available";
+    return `₹${Number(price).toLocaleString('en-IN')}`;
+  };
+
+  // Custom Arrow Components
+  const CustomLeftArrow = ({ onClick }) => (
+    <button 
+      onClick={onClick}
+      className="btn btn-dark rounded-circle position-absolute"
+      style={{ 
+        left: '-20px', 
+        top: '50%', 
+        transform: 'translateY(-50%)', 
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        border: 'none',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+      }}
+    >
+      <i className="fas fa-chevron-left text-white"></i>
+    </button>
+  );
+
+  const CustomRightArrow = ({ onClick }) => (
+    <button 
+      onClick={onClick}
+      className="btn btn-dark rounded-circle position-absolute"
+      style={{ 
+        right: '-20px', 
+        top: '50%', 
+        transform: 'translateY(-50%)', 
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        border: 'none',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+      }}
+    >
+      <i className="fas fa-chevron-right text-white"></i>
+    </button>
+  );
+
+  // Loading State
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h3 className="fs-1 text-white">Spare Parts</h3>
+        </div>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+          <div className="text-center">
+            <ClipLoader size={50} color="#28a745" />
+            <p className="text-white mt-3">Loading spare parts...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty State
+  if (spareParts.length === 0) {
+    return (
+      <div className="container mt-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h3 className="fs-1 text-white">Spare Parts</h3>
+        </div>
+        <div className="text-center py-5">
+          <div className="text-muted fs-1 mb-3">
+            <i className="fas fa-box-open"></i>
+          </div>
+          <h5 className="text-white mb-3">No spare parts available</h5>
+          <p className="text-muted mb-4">Check back later for new spare parts.</p>
+          <button 
+            className="btn btn-outline-success" 
+            onClick={() => navigate("/spareparts")}
+          >
+            Browse Categories
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3 className="fs-1 text-white">Spare Parts</h3>
+      {/* Header */}
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
+        <h3 className="fs-1 text-white mb-2 mb-sm-0">
+          Spare Parts
+          <span className="badge bg-success ms-3 fs-6">{spareParts.length}</span>
+        </h3>
         <button
-          className="btn btn-outline-success btn-sm"
+          className="btn btn-outline-success btn-sm px-4"
           onClick={() => navigate("/spareparts")}
         >
+          <i className="fas fa-arrow-right me-2"></i>
           View All
         </button>
       </div>
 
-      <div id="sparePartsCarousel" className="carousel slide" data-bs-ride="carousel">
-        <div className="carousel-inner">
-          {spareParts
-            .reduce((rows, part, index) => {
-              if (index % 4 === 0) rows.push([]);
-              rows[rows.length - 1].push(part);
-              return rows;
-            }, [])
-            .map((group, groupIndex) => (
-              <div
-                key={groupIndex}
-                className={`carousel-item ${groupIndex === 0 ? "active" : ""}`}
-              >
-                <div className="row g-3">
-                  {group.map((part, index) => (
-                    <div
-                      className="col-12 col-sm-6 col-md-4 col-lg-3"
-                      key={part.id || part._id || index}
-                    >
-                      <div
-                        className="card shadow-sm border-0 rounded-4 h-100"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleProductClick(part.id)}
-                      >
-                        <img
-                          src={`${BASE_URL}${part.image} `|| "https://via.placeholder.com/200?text=No+Image"}
-                          className="card-img-top rounded-top-4 img-fluid"
-                          alt={part.name}
-                          style={{ height: "150px", objectFit: "cover" }}
-                        />
-                        <div className="card-body text-center">
-                          <h6 className="card-title">{part.name}</h6>
-                          <p className="mb-0">₹ {part.price}</p>
-                        </div>
+      {/* Carousel */}
+      <div className="position-relative">
+        <Carousel
+          responsive={responsive}
+          infinite={true}
+          autoPlay={true}
+          autoPlaySpeed={4000}
+          keyBoardControl={true}
+          customTransition="transform 300ms ease-in-out"
+          transitionDuration={300}
+          containerClass="carousel-container"
+          removeArrowOnDeviceType={["tablet", "mobile"]}
+          deviceType="desktop"
+          dotListClass="custom-dot-list-style"
+          itemClass="carousel-item-padding-40-px"
+          customLeftArrow={<CustomLeftArrow />}
+          customRightArrow={<CustomRightArrow />}
+          showDots={spareParts.length > 4}
+          swipeable={true}
+          draggable={true}
+          ssr={true}
+        >
+          {spareParts.map((part, index) => {
+            const partId = part.id || part._id || index;
+            
+            return (
+              <div key={partId} className="px-2">
+                <div
+                  className="card shadow-sm border-0 rounded-4 h-100 product-card"
+                  style={{ cursor: "pointer", transition: "all 0.3s ease" }}
+                  onClick={() => handleProductClick(part)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.15)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.1)";
+                  }}
+                >
+                  <div className="position-relative overflow-hidden rounded-top-4">
+                    <img
+                      src={getImageSrc(part)}
+                      className="card-img-top img-fluid"
+                      alt={part.name || "Spare part"}
+                      style={{ 
+                        height: "200px", 
+                        objectFit: "contain",
+                        backgroundColor: "#f8f9fa",
+                        transition: "transform 0.3s ease"
+                      }}
+                      onError={() => handleImageError(partId)}
+                      loading="lazy"
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = "scale(1.05)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = "scale(1)";
+                      }}
+                    />
+                    {part.discount && (
+                      <div className="position-absolute top-0 end-0 m-2">
+                        <span className="badge bg-danger rounded-pill">
+                          {part.discount}% OFF
+                        </span>
                       </div>
+                    )}
+                    {part.isNew && (
+                      <div className="position-absolute top-0 start-0 m-2">
+                        <span className="badge bg-primary rounded-pill">
+                          New
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="card-body text-center p-3">
+                    <h6 className="card-title text-truncate mb-2 fw-bold" title={part.name}>
+                      {part.name || "Unnamed Part"}
+                    </h6>
+                    <div className="d-flex justify-content-center align-items-center mb-2">
+                      <span className="fw-bold text-success fs-5">
+                        {formatPrice(part.price)}
+                      </span>
+                      {part.originalPrice && part.originalPrice > part.price && (
+                        <span className="text-muted text-decoration-line-through ms-2 small">
+                          ₹{Number(part.originalPrice).toLocaleString('en-IN')}
+                        </span>
+                      )}
                     </div>
-                  ))}
+                    {part.brand && (
+                      <small className="text-muted d-block">
+                        Brand: {part.brand}
+                      </small>
+                    )}
+                    <div className="mt-2">
+                      <button className="btn btn-outline-success btn-sm w-100">
+                        <i className="fas fa-eye me-2"></i>
+                        View Details
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            ))}
-        </div>
+            );
+          })}
+        </Carousel>
+      </div>
 
-        {/* Controls */}
+      {/* Refresh Button */}
+      <div className="text-center mt-4">
         <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#sparePartsCarousel"
-          data-bs-slide="prev"
+          className="btn btn-outline-light btn-sm"
+          onClick={fetchSpareparts}
+          disabled={loading}
         >
-          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#sparePartsCarousel"
-          data-bs-slide="next"
-        >
-          <span className="carousel-control-next-icon" aria-hidden="true"></span>
-          <span className="visually-hidden">Next</span>
+          {loading ? (
+            <>
+              <ClipLoader size={16} color="#ffffff" className="me-2" />
+              Refreshing...
+            </>
+          ) : (
+            <>
+              <i className="fas fa-sync-alt me-2"></i>
+              Refresh
+            </>
+          )}
         </button>
       </div>
     </div>
