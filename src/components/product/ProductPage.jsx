@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { addToCart } from "../../Store/Slices/CartSlice";
+import { useDispatch } from "react-redux";
 
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
@@ -14,6 +16,12 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const dispatch=useDispatch();
+
+  // quotation form states
+  const [showForm, setShowForm] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   // Fetch product details
   useEffect(() => {
@@ -42,7 +50,6 @@ const ProductPage = () => {
           `${BASE_URL}api/spare-part/get-Suppliersforspartpart/${productId}`
         );
         setSuppliers(res.data.data || []);
-        console.log(res.data.data);
       } catch (err) {
         console.error("Failed to fetch suppliers:", err);
         toast.error("⚠️ Failed to load suppliers!");
@@ -83,15 +90,30 @@ const ProductPage = () => {
     mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
-  // Send quotation request
-  const sendQuotation = (supplier) => {
-    toast.success(`✅ Quotation request sent to ${supplier.name}`);
+  // Open quotation form
+  const openQuotationForm = (supplier) => {
+    setSelectedSupplier(supplier);
+    setQuantity(1);
+    setShowForm(true);
   };
 
-  // Add to cart
-  const addToCart = () => {
-    toast.success(`🛒 ${product.name} added to cart`);
+  // Submit quotation request
+  const handleQuotationSubmit = () => {
+    if (!quantity || quantity <= 0) {
+      toast.error("⚠️ Please enter a valid quantity");
+      return;
+    }
+    toast.success(
+      `✅ Quotation request sent to ${selectedSupplier.userId.name} for ${quantity} unit(s)`
+    );
+    //api for sending quotation request to the perticular supplier
+    setShowForm(false);
   };
+  const AddToCart=(product)=>{
+    dispatch(addToCart(product));
+    
+   
+  }
 
   return (
     <div className="container my-5 p-4 rounded">
@@ -128,11 +150,17 @@ const ProductPage = () => {
             <span style={labelStyle}>Variant:</span>{" "}
             {product.variant?.join(", ")}
           </p>
-          <button className="btn btn-primary mt-3" onClick={addToCart}>
+          <button
+            className="btn btn-primary mt-3"
+            onClick={() => AddToCart(product)
+              }
+          >
             🛒 Add to Cart
           </button>
-           <button className="btn ms-2 btn-primary mt-3 text-white" >
-          <a href="#supplier" className="text-white" >View Suppliers</a>
+          <button className="btn ms-2 btn-primary mt-3 text-white">
+            <a href="#supplier" className="text-white">
+              View Suppliers
+            </a>
           </button>
         </div>
       </div>
@@ -192,7 +220,7 @@ const ProductPage = () => {
                     </p>
                     <button
                       className="btn btn-success w-100 mt-auto"
-                      onClick={() => sendQuotation(sup)}
+                      onClick={() => openQuotationForm(sup)}
                     >
                       Request Quotation
                     </button>
@@ -205,6 +233,48 @@ const ProductPage = () => {
           )}
         </Carousel>
       </div>
+
+      {/* Quotation Form Overlay */}
+      {showForm && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+          style={{ backgroundColor: "rgba(0,0,0,0.7)", zIndex: 1050 }}
+        >
+          <div
+            className="bg-dark text-white p-4 rounded"
+            style={{ width: "400px" }}
+          >
+            <h5 className="mb-3">Request Quotation</h5>
+            <p>
+              Supplier: <strong>{selectedSupplier?.userId?.name}</strong>
+            </p>
+            <div className="mb-3">
+              <label className="form-label">Quantity</label>
+              <input
+                type="number"
+                min="1"
+                className="form-control"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+            </div>
+            <div className="d-flex justify-content-end">
+              <button
+                className="btn btn-secondary me-2"
+                onClick={() => setShowForm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-success"
+                onClick={handleQuotationSubmit}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

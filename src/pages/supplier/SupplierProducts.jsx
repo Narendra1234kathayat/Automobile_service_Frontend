@@ -1,17 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance, { BASE_URL } from "../../utils/axiosInstance.js"; // your axios setup
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance.js";
+// import "./SupplierProducts.css";
+
+const SHORT_TEXT_LIMIT = 40;
+
+const TextWithToggle = ({ text }) => {
+  const [showMore, setShowMore] = useState(false);
+  
+  if (!text) return <span>N/A</span>;
+  
+  const isLong = text.length > SHORT_TEXT_LIMIT;
+  const displayText = showMore || !isLong 
+    ? text 
+    : text.substring(0, SHORT_TEXT_LIMIT) + "...";
+
+  return (
+    <span>
+      {displayText}
+      {isLong && (
+        <button
+          type="button"
+          className="toggle-btn"
+          onClick={() => setShowMore(!showMore)}
+        >
+          {showMore ? " Show Less" : " Show More"}
+        </button>
+      )}
+    </span>
+  );
+};
 
 const SupplierProducts = () => {
   const navigate = useNavigate();
-
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
+  const supplierId = JSON.parse(localStorage.getItem("user"));
 
-  // ✅ Replace with actual logged-in supplierId from token/session
-  const supplierId = JSON.parse(localStorage.getItem("user")); // Example: "supplier123"
-
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -25,10 +50,8 @@ const SupplierProducts = () => {
         console.error("Error fetching products:", err.response?.data || err.message);
       }
     };
-
     if (supplierId) fetchProducts();
   }, [supplierId]);
-
 
   const handleEdit = (product) => {
     console.log("Editing product:", product);
@@ -37,7 +60,6 @@ const SupplierProducts = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
-
     try {
       await axiosInstance.delete(`/api/spare-part/delete-spare-part/supplier/${id}`);
       setProducts(products.filter((p) => p._id !== id));
@@ -49,17 +71,16 @@ const SupplierProducts = () => {
   };
 
   const filteredProducts = products.filter(
-  (p) =>
-    p.name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.categoryId?.name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.brandId?.some((b) => b.name?.toLowerCase().includes(search.toLowerCase()))
-);
-
+    (p) =>
+      p.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.categoryId?.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.brandId?.some((b) => b.name?.toLowerCase().includes(search.toLowerCase()))
+  );
 
   return (
-    <div className="container my-5">
+    <div className="container">
       <h2 className="mb-4 text-white">My Spare Parts</h2>
-
+      
       <div className="mb-4">
         <input
           type="text"
@@ -73,48 +94,68 @@ const SupplierProducts = () => {
       <div className="row">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((p) => (
-            <div className="col-md-4 mb-4" key={p._id}>
-              <div className="card h-100 shadow border-0">
+            <div className="col-md-6 col-lg-4  mb-4" key={p._id}>
+              <div className="card h-100 shadow border-0 product-card">
                 {p.image && (
                   <img
-                    src={BASE_URL+"/"+p.image} // adjust to your backend static path
-                    className="card-img-top"
+                    src={BASE_URL + "/" + p.image}
+                    className="card-img-top "
                     alt={p.name}
-                    style={{ height: "180px", objectFit: "cover" }}
+                    style={{  objectFit: "contain" }}
                   />
                 )}
+                
                 <div className="card-body text-white">
                   <h5 className="card-title">{p.name}</h5>
-                  <p className="card-text">{p.description}</p>
+                  
+                  <div className="mb-2">
+                    <strong>Description:</strong>{" "}
+                    <TextWithToggle text={p.description} />
+                  </div>
+
                   <ul className="list-unstyled small">
-                    <li><strong>Category:</strong> {p.categoryId?.name}</li>
-                    <li><strong>Specifications:</strong> {p.specifications}</li>
-
-                    {/* Multiple brands */}
                     <li>
-                      <strong>Brands:</strong>{" "}
-                      {p.brandId?.map((b) => b.name).join(", ")}
+                      <strong>Category:</strong> {p.categoryId?.name || "N/A"}
                     </li>
-
-                    {/* Multiple models */}
                     <li>
-                      <strong>Models:</strong>{" "}
-                      {p.modelId?.map((m) => m.carModel).join(", ")}
+                      <strong>Specifications:</strong>{" "}
+                      <TextWithToggle text={p.specifications} />
                     </li>
-
-                    {/* Multiple variants */}
-                    <li>
-                      <strong>Variants:</strong> {p.variant?.join(", ")}
+                    
+                  </ul>
+                  <ul className="d-flex gap-3 list-unstyled">
+                     <li className="d-flex flex-column">
+                      <strong>Brands</strong>{" "}
+                      {p.brandId?.map((b) => b.name).join(", ") || "N/A"}
                     </li>
-
-                    {/* Price (assuming supplierSparePart relation has price) */}
-                    {p.price && <li><strong>Price:</strong> ₹{p.price}</li>}
+                    <li className="d-flex flex-column">
+                      <strong>Models</strong>{" "}
+                      {p.modelId?.map((m) => m.carModel).join(", ") || "N/A"}
+                    </li>
+                    <li className="d-flex flex-column">
+                      <strong>Variants</strong> {p.variant?.join(", ") || "N/A"}
+                    </li>
+                    {p.price && (
+                      <li className="d-flex flex-column">
+                        <strong>Price</strong> ₹{p.price}
+                      </li>
+                    )}
                   </ul>
                 </div>
 
                 <div className="card-footer bg-transparent border-0 d-flex justify-content-between">
-                  <button className="btn btn-sm btn-warning" onClick={() => handleEdit(p)}>Edit</button>
-                  <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p._id)}>Delete</button>
+                  <button 
+                    className="btn btn-sm btn-warning" 
+                    onClick={() => handleEdit(p)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="btn btn-sm btn-danger" 
+                    onClick={() => handleDelete(p._id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
@@ -123,7 +164,6 @@ const SupplierProducts = () => {
           <p className="text-white text-center">No spare parts found.</p>
         )}
       </div>
-
     </div>
   );
 };

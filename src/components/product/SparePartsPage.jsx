@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
-
+import { useSelector } from "react-redux";
 // Variants (static for now, in lowercase)
 const variants = ["petrol", "diesel", "cng", "electric"];
 
@@ -20,6 +20,14 @@ const SparePartsPage = () => {
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedVariant, setSelectedVariant] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const data = useSelector((state) => state.search.query);
+
+useEffect(() => {
+  if (data) {
+    setSearchTerm(data);
+  }
+}, [data]);
+
 
   // ✅ Fetch Categories
   useEffect(() => {

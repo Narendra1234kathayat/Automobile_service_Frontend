@@ -13,6 +13,7 @@ const Navbar = () => {
 
   // ✅ Get spare parts list from Redux
   const spareParts = useSelector((state) => state.spareparts.items);
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,8 +21,10 @@ const Navbar = () => {
   }, []);
 
   const handleSearch = (e) => {
+    // console.log(searchTerm);
     e.preventDefault();
     if (!searchTerm.trim()) return;
+    
 
     dispatch(setSearchQuery(searchTerm));
 
