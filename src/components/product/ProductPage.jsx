@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,7 +16,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   // quotation form states
   const [showForm, setShowForm] = useState(false);
@@ -98,21 +98,44 @@ const ProductPage = () => {
   };
 
   // Submit quotation request
-  const handleQuotationSubmit = () => {
+  const handleQuotationSubmit = async () => {
     if (!quantity || quantity <= 0) {
       toast.error("⚠️ Please enter a valid quantity");
       return;
     }
-    toast.success(
-      `✅ Quotation request sent to ${selectedSupplier.userId.name} for ${quantity} unit(s)`
-    );
     //api for sending quotation request to the perticular supplier
-    setShowForm(false);
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+  
+     
+      const quotationData = {
+        mechanicId: user,
+        supplierId: selectedSupplier.userId._id,
+        product: {
+          sparePartId: productId,
+          quantity: quantity,
+        },
+      };
+      console.log("QuotationData sending:", quotationData);
+      const response = await axiosInstance.post(`${BASE_URL}api/quotation/request-quotation`, quotationData);
+      if (response.status === 200 || response.status === 201) {
+        toast.success(
+          `✅ Quotation request sent to ${selectedSupplier.userId.name} for ${quantity} unit(s)`
+        );
+        setShowForm(false);
+      }
+    } catch (error) {
+     console.error("Quotation submit error:", error.response?.data || error.message);
+      toast.error("❌ Failed to send quotation request");
+    }
+
+
+
   };
-  const AddToCart=(product)=>{
+  const AddToCart = (product) => {
     dispatch(addToCart(product));
-    
-   
+
+
   }
 
   return (
@@ -153,7 +176,7 @@ const ProductPage = () => {
           <button
             className="btn btn-primary mt-3"
             onClick={() => AddToCart(product)
-              }
+            }
           >
             🛒 Add to Cart
           </button>
@@ -271,6 +294,7 @@ const ProductPage = () => {
               >
                 Submit
               </button>
+              
             </div>
           </div>
         </div>
