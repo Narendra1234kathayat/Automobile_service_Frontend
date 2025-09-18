@@ -3,20 +3,17 @@ import './index.css';
 import { ToastContainer, toast } from 'react-toastify';
 import Navbar from './components/navbar/Navbar';
 import Login from './components/auth/Login';
+import AOS from "aos";
+import "aos/dist/aos.css"; 
 
 import React, { useEffect, useState } from "react";
 //import socket from "../src/socket/SocketUser.js"; // adjust path if different
 function App() {
   useEffect(() => {
-    // Listening to a message from backend
-    socket.on("message", (data) => {
-      console.log("Received from server:", data);
-      setMessages(prev => [...prev, data]);
+    AOS.init({
+      duration: 1000, // Animation duration in ms
+      once: false,     // Whether animation should happen only once
     });
-
-    return () => {
-      socket.off("message");
-    };
   }, []);
   
   
@@ -45,7 +42,7 @@ function App() {
         zindex={99999999}
         theme="dark"
       />
-        <button onClick={sendTestMessage} className="btn btn-primary m-3">Send Test Message</button>
+        {/* <button onClick={sendTestMessage} className="btn btn-primary m-3">Send Test Message</button>
         <div className="messages">  
           {messages.map((msg, index) => (
             <div key={index} className="message">
@@ -53,7 +50,7 @@ function App() {
             </div>
           ))}
 
-        </div>
+        </div> */}
         
       
       </div>

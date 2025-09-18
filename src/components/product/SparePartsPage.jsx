@@ -22,11 +22,11 @@ const SparePartsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const data = useSelector((state) => state.search.query);
 
-useEffect(() => {
-  if (data) {
-    setSearchTerm(data);
-  }
-}, [data]);
+  useEffect(() => {
+    if (data) {
+      setSearchTerm(data);
+    }
+  }, [data]);
 
 
   // ✅ Fetch Categories
@@ -172,7 +172,7 @@ useEffect(() => {
         {!brandName && !modelName && (
           <>
             {/* Brand */}
-            <div className="col-md-4 col-sm-6 mb-2">
+            <div className="col-md-4 col-6 mb-2">
               <select
                 className="form-select bg-dark text-light border-secondary"
                 value={selectedBrand}
@@ -193,7 +193,7 @@ useEffect(() => {
             </div>
 
             {/* Model */}
-            <div className="col-md-4 col-sm-6 mb-2">
+            <div className="col-md-4 col-6 mb-2">
               <select
                 className="form-select bg-dark text-light border-secondary"
                 value={selectedModel}
@@ -210,7 +210,7 @@ useEffect(() => {
             </div>
 
             {/* Variant */}
-            <div className="col-md-4 col-sm-6 mb-2">
+            <div className="col-md-4 col-6 mb-2">
               <select
                 className="form-select bg-dark text-light border-secondary"
                 value={selectedVariant}
@@ -228,12 +228,12 @@ useEffect(() => {
         )}
 
         {/* Reset Filters Button */}
-        <div className="col-md-4  mb-2">
+        <div className="col-md-4 col-6  mb-2">
           <button
             className="btn bg-dark text-light border-secondary  w-100"
             onClick={handleResetFilters}
           >
-            ❌ Remove Filters
+            Remove Filters
           </button>
         </div>
       </div>
@@ -243,9 +243,8 @@ useEffect(() => {
         {categories.map((cat, index) => (
           <button
             key={index}
-            className={`btn ${
-              selectedCategory === cat ? "btn-light" : "btn-outline-light"
-            }`}
+            className={`btn ${selectedCategory === cat ? "btn-light" : "btn-outline-light"
+              }`}
             onClick={() => handleCategoryClick(cat)}
           >
             {cat}
@@ -256,33 +255,52 @@ useEffect(() => {
       {/* Spare Parts List */}
       <div className="row">
         {filteredParts.length > 0 ? (
-          filteredParts.map((part) => (
-            <div className="col-sm-6 col-lg-3 col-md-4 mb-2" key={part._id}>
+          filteredParts.map((part, index) => (
+            <div
+              className="col-sm-6 col-lg-3 col-md-4 mb-3"
+              key={part._id}
+              data-aos="zoom-in"            // ✅ AOS animation
+              data-aos-delay={index * 100} // ✅ Staggered animation
+            >
               <div
-                className="card bg-dark text-light border-secondary shadow-sm h-100"
+                className="card bg-dark text-light border-secondary shadow h-100"
                 onClick={() => navigate(`/product/${part._id}`)}
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.05)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.5)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+                }}
               >
                 <img
                   src={BASE_URL + part.image}
-                  className="card-img-top"
+                  className="card-img-top p-2 bg-light"
                   alt={part.name}
-                  style={{ height: "180px", objectFit: "cover" }}
+                  style={{
+                    height: "160px",
+                    objectFit: "contain",
+                    borderBottom: "1px solid #444",
+                  }}
                 />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{part.name}</h5>
+                <div className="card-body d-flex flex-column text-center">
+                  <h5 className="card-title fw-bold mb-2">{part.name}</h5>
                   <p className="card-text mb-1">
                     <strong>Category:</strong> {part.categoryId?.name}
                   </p>
                   <p className="card-text mb-1">
-                    <strong>Price:</strong> {part.price}
+                    <strong>Price:</strong> ₹{part.price}
                   </p>
                   <p
-                    className={`card-text ${
-                      part.availability === "Out of Stock"
+                    className={`card-text fw-semibold ${part.availability === "Out of Stock"
                         ? "text-danger"
                         : "text-success"
-                    }`}
+                      }`}
                   >
                     <strong>Availability:</strong> {part.availability}
                   </p>
@@ -293,6 +311,7 @@ useEffect(() => {
         ) : (
           <p className="text-center text-muted">No spare parts found.</p>
         )}
+
       </div>
     </div>
   );

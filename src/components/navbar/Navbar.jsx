@@ -2,11 +2,20 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setSearchQuery } from "../../Store/Slices/SearchSlice.js";
-
+import CarAnimation from "../animation/CarAnimation.jsx";
+import SocketUser from "../../socket/SocketUser.js";
 const Navbar = () => {
   const [activeItem, setActiveItem] = useState("Home");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (isLoggedIn && user) {
+    SocketUser.emit("register", user); // or user object, depending on backend
+    console.log("User registered to socket with ID:", user);
+  }
+}, [isLoggedIn]); // runs only when isLoggedIn changes
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -50,8 +59,12 @@ const Navbar = () => {
   };
 
   return (
+    <>
+    
     <nav className="navbar navbar-expand-md bg-body-secondary-emphasis">
-      <div className="container-fluid container-lg my-lg-2 mx-auto">
+      <CarAnimation/>
+      <div className="container-fluid container-lg my-lg-2 mx-auto ">
+        
         <Link className="navbar-brand" to="/">SpareLink</Link>
         <button
           className="navbar-toggler"
@@ -151,6 +164,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+    </>
   );
 };
 

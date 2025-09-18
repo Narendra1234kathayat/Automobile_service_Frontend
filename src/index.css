@@ -10,7 +10,10 @@ html {
   scroll-behavior: smooth ;
   scroll-margin: 0;
 }
-
+body, html {
+  overflow-x: hidden; /* ✅ Hide horizontal scroll globally */
+}
+  
 .mainbox {
   width: 100vw;
 
@@ -21,7 +24,10 @@ body {
   background-color: #111828 !important;
   color: white;
   line-height: 1.6;
+  
+  width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
 
 }
 
@@ -32,7 +38,8 @@ body {
   left: 0;
   right: 0;
   width: 95%;
-  z-index: 1;
+  z-index: 0;
+  overflow-x: hidden !important;
   margin: 0 auto;
   border-radius: 10px;
   padding: 1rem 2rem;
@@ -464,3 +471,51 @@ body {
     font-size: 1.1rem;
   }
 }
+
+
+/* animation top */
+
+.road {
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;   /* ✅ Prevent x-scroll */
+  left: 0;
+  bottom: 0;
+  background: transparent !important;
+}
+
+.car {
+  position: absolute;
+  z-index: 1; /* navbar can have z-index: 100 or higher */
+  width: 110px;
+  height: 110px;
+
+  animation: moveCar 25s linear infinite;
+  pointer-events: none;
+}
+
+
+/* Keyframes to move left → right → left */
+@keyframes moveCar {
+  0% {
+    left: 0px;   /* Start outside left */
+  }
+  50% {
+    left: 100%;     /* Move to right outside */
+    transform: scaleX(1); /* Facing right */
+  }
+  51% {
+    transform: scaleX(-1); /* Flip horizontally to face left */
+  }
+  100% {
+    left: 0px;   /* Move back outside left */
+    transform: scaleX(-1);
+  }
+}
+
+
+
+
+
+

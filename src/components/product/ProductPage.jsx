@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { data, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,7 +8,6 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { addToCart } from "../../Store/Slices/CartSlice";
 import { useDispatch } from "react-redux";
-
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
 const ProductPage = () => {
@@ -103,11 +102,9 @@ const ProductPage = () => {
       toast.error("⚠️ Please enter a valid quantity");
       return;
     }
-    //api for sending quotation request to the perticular supplier
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-  
-     
+
       const quotationData = {
         mechanicId: user,
         supplierId: selectedSupplier.userId._id,
@@ -116,27 +113,30 @@ const ProductPage = () => {
           quantity: quantity,
         },
       };
+
       console.log("QuotationData sending:", quotationData);
-      const response = await axiosInstance.post(`${BASE_URL}api/quotation/request-quotation`, quotationData);
+
+      const response = await axiosInstance.post(
+        `${BASE_URL}api/quotation/request-quotation`,
+        quotationData
+      );
+
       if (response.status === 200 || response.status === 201) {
         toast.success(
           `✅ Quotation request sent to ${selectedSupplier.userId.name} for ${quantity} unit(s)`
         );
         setShowForm(false);
       }
+      
     } catch (error) {
-     console.error("Quotation submit error:", error.response?.data || error.message);
+      console.error("Quotation submit error:", error.response?.data || error.message);
       toast.error("❌ Failed to send quotation request");
     }
-
-
-
   };
+
   const AddToCart = (product) => {
     dispatch(addToCart(product));
-
-
-  }
+  };
 
   return (
     <div className="container my-5 p-4 rounded">
@@ -175,8 +175,7 @@ const ProductPage = () => {
           </p>
           <button
             className="btn btn-primary mt-3"
-            onClick={() => AddToCart(product)
-            }
+            onClick={() => AddToCart(product)}
           >
             🛒 Add to Cart
           </button>
@@ -217,7 +216,13 @@ const ProductPage = () => {
             Suppliers
           </h4>
         </div>
-        <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={4000}>
+        <Carousel
+          responsive={responsive}
+          infinite
+          autoPlay
+          autoPlaySpeed={4000}
+          ariaHiddenOnInactiveSlides={false} // ✅ Fix accessibility error
+        >
           {suppliers.length > 0 ? (
             suppliers.map((sup, index) => (
               <motion.div
@@ -294,7 +299,6 @@ const ProductPage = () => {
               >
                 Submit
               </button>
-              
             </div>
           </div>
         </div>

@@ -60,7 +60,7 @@ function Login() {
         
         // Store user data
         localStorage.setItem('token', response.data.authtoken);
-        localStorage.setItem('user', JSON.stringify(response.data.data._id));
+        localStorage.setItem('user',JSON.stringify(response.data.data._id));
         localStorage.setItem('role', JSON.stringify(response.data.data.roleId.roleName));
         
         // Success toast
@@ -224,7 +224,7 @@ function Login() {
                   <input type="checkbox" className="form-check-input" id="rememberMe" />
                   <label htmlFor="rememberMe" className="form-check-label">Remember me</label>
                 </div>
-                <Link to="/forgot-password" className="text-success text-decoration-none small">
+                <Link to="/forgotpassword" className="text-success text-decoration-none small">
                   Forgot password?
                 </Link>
               </motion.div>

@@ -2,11 +2,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar, closeSidebar } from "../../Store/Slices/SidebarSlice.js";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaBox, FaClipboardList, FaPlus, FaUser, FaSignOutAlt } from "react-icons/fa";
-
+import SocketUser from "../../socket/SocketUser.js";
 const SupplierSidebar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isOpen = useSelector((state) => state.sidebar.isOpen);
+     const user=JSON.parse(localStorage.getItem("user"));
+  if(user){
+    
+      SocketUser.emit("register", user);
+      console.log("User registered to socket with ID:", user);
+    
+  }
+  
 
     // Logout function
     const handleLogout = () => {

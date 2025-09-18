@@ -19,6 +19,7 @@ import Navbar from './components/navbar/Navbar.jsx';
 import HomeScreen from './components/home/HomeScreen.jsx';
 import Login from './components/auth/Login.jsx';
 import Register from './components/auth/Register.jsx';
+import ForgotPassword from './components/auth/ForgotPassword.jsx';
 import ProfilePage from './components/profile/ProfilePage.jsx';
 import ProductContainer from './components/home/ProductContainer.jsx';
 import SparePartsPage from './components/product/SparePartsPage.jsx';
@@ -71,6 +72,7 @@ function Root() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgotpassword" element={<ForgotPassword/>}/>
         {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
 
         {/* Other public pages */}
@@ -131,6 +133,7 @@ function Root() {
           <Route path="quotations" element={<Quotations />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="products" element={<SupplierProducts />} />
+          <Route path="quotation/:id" element={<Quotations/>}/>
         </Route>
       </Routes>
 

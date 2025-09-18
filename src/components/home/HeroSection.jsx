@@ -1,54 +1,19 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const HeroSection = () => {
-  // Container animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        when: "beforeChildren",
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  // Simple animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, x: -40 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { duration: 0.8, ease: "easeOut" }
-    }
-  };
-
-  const fadeInRight = {
-    hidden: { opacity: 0, x: 50 },
-    visible: { 
-      opacity: 1, 
-      x: 0, 
-      transition: { duration: 0.8, ease: "easeOut" }
-    }
-  };
+  
 
   return (
-    <motion.section
-      className="pt-lg-5 pt-3 mb-lg-4 mb-3"
-      variants={containerVariants} // ← Added missing container variants
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }} // ← Added 'once: true' for performance
-    >
+    <section className="pt-lg-5 pt-3 mb-lg-4 mb-3">
       <div className="container">
         <div className="row align-items-center">
           
           {/* Text Section */}
-          <motion.div
-            className="col-md-6 text-center text-md-start"
-            variants={fadeInUp}
+          <div
+            className="col-md-6 my-3   text-center text-md-start"
+            data-aos="fade-right"
           >
             <h1 className="display-4 fw-bold mb-3 text-white">
               Find Genuine <span className="text-success">Spare Parts</span> Easily
@@ -57,34 +22,34 @@ const HeroSection = () => {
               Discover nearby hardware shops, check availability, and track your
               vehicle's servicing—all in one place.
             </p>
-            <motion.a 
-              href="#category" 
+            <a
+              href="#category"
               className="btn btn-lg btn-success px-4 py-2 rounded-pill"
-              whileHover={{ scale: 1.05 }} // ← Added hover animation
-              whileTap={{ scale: 0.95 }}   // ← Added tap animation
+              data-aos="zoom-in"
+              data-aos-delay="200"
             >
               <i className="fas fa-search me-2"></i>
               Explore Brands
-            </motion.a>
-          </motion.div>
+            </a>
+          </div>
 
           {/* Image Section */}
-          <motion.div
+          <div
             className="col-md-6 text-center mt-4 mt-md-0"
-            variants={fadeInRight}
+            data-aos="fade-left"
           >
-            <motion.img
+            <img
               src="https://media.istockphoto.com/id/526209999/photo/auto-parts.jpg?s=612x612&w=0&k=20&c=yXvzy425jTHSTKWxd7XCdIuh9zLLnTfNHD1jrRCwkrk="
               alt="Spare Parts"
               className="img-fluid rounded shadow-lg"
               style={{ maxHeight: "350px" }}
-              whileHover={{ scale: 1.02 }} // ← Added subtle hover effect
-              transition={{ duration: 0.3 }}
+              data-aos="fade-left"
+              data-aos-delay="300"
             />
-          </motion.div>
+          </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 
