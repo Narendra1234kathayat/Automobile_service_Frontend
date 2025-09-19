@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axiosInstance from "../../utils/axiosInstance";
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
@@ -70,35 +70,46 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     try {
+
       if (step === 1) {
         // API: Send OTP
-        await axiosInstance.post("/api/auth/send-otp", { email });
-        toast.success("OTP sent to your email!");
-        setStep(2);
-        setTimeLeft(120);
+        const response = await axiosInstance.post(`${BASE_URL}api/users/forgot-password`, { email: email });
+        if (response.status === 200) {
+          toast.success("OTP sent to your email!");
+          setStep(2);
+          setTimeLeft(120);
+        } 
       } else if (step === 2) {
-        // API: Verify OTP
-        const code = otp.join("");
-        await axiosInstance.post("/api/auth/verify-otp", { email, otp: code });
-        toast.success("OTP verified successfully!");
-        setStep(3);
+        const code = Number(otp.join(""));
+        const response = await axiosInstance.post(`${BASE_URL}api/users/verify-otp`, { email: email,otp:code })
+        if (response.status === 200) {
+          localStorage.setItem('resetToken', response.data.resetToken)
+          toast.success("OTP verified successfully!");
+          setStep(3);
+        } 
       } else {
+        const resetToken = localStorage.getItem('resetToken');
+
         // API: Reset Password
-        await axiosInstance.post("/api/auth/reset-password", {
-          email,
-          password,
-          confirmPassword,
+       const response = await axiosInstance.post(`${BASE_URL}api/users/reset-password`, {
+          resetToken:resetToken,
+          newPassword:confirmPassword
         });
+        if(response.status===200){
         toast.success("Password changed successfully!");
         setStep(1);
         setEmail("");
         setPassword("");
         setConfirmPassword("");
         setOtp(["", "", "", ""]);
+        }
       }
     } catch (error) {
-      
-      toast.error(error.response?.data?.message || "Something went wrong!");
+      if (error.response?.status === 400 || error.response?.status === 404 || error.response?.status===401) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong! Please try again.");
+      }
     }
     setIsLoading(false);
   };
@@ -167,15 +178,15 @@ const ForgotPassword = () => {
               {step === 1
                 ? "Forgot Password?"
                 : step === 2
-                ? "Verify OTP"
-                : "Reset Password"}
+                  ? "Verify OTP"
+                  : "Reset Password"}
             </h2>
             <p className="mb-0 text-white-50">
               {step === 1
                 ? "Enter your email to receive a reset code"
                 : step === 2
-                ? "Enter the 4-digit code sent to your email"
-                : "Create a new secure password"}
+                  ? "Enter the 4-digit code sent to your email"
+                  : "Create a new secure password"}
             </p>
           </div>
 
@@ -228,9 +239,8 @@ const ForgotPassword = () => {
                     <label className="form-label">Email Address</label>
                     <input
                       type="email"
-                      className={`form-control ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.email ? "is-invalid" : ""
+                        }`}
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -310,9 +320,8 @@ const ForgotPassword = () => {
                     <label className="form-label">New Password</label>
                     <input
                       type={showPassword ? "text" : "password"}
-                      className={`form-control ${
-                        errors.password ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.password ? "is-invalid" : ""
+                        }`}
                       placeholder="Enter new password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -328,9 +337,8 @@ const ForgotPassword = () => {
                     <label className="form-label">Confirm Password</label>
                     <input
                       type={showConfirmPassword ? "text" : "password"}
-                      className={`form-control ${
-                        errors.confirmPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.confirmPassword ? "is-invalid" : ""
+                        }`}
                       placeholder="Confirm new password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -360,10 +368,10 @@ const ForgotPassword = () => {
               {isLoading
                 ? "Processing..."
                 : step === 1
-                ? "Send Code"
-                : step === 2
-                ? "Verify Code"
-                : "Update Password"}
+                  ? "Send Code"
+                  : step === 2
+                    ? "Verify Code"
+                    : "Update Password"}
             </button>
 
             {/* Back Button */}
