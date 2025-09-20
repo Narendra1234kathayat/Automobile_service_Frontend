@@ -46,12 +46,12 @@ const CartPage = () => {
   return (
     <div className="container py-5 position-relative">
       <h2 className="mb-4 text-center" style={{ color: "#ffffffff" }}>
-        Your Cart
+        Your Wishlist
       </h2>
 
       {cartItems.length === 0 ? (
         <div className="text-center">
-          <p className="lead">Your cart is empty.</p>
+          <p className="lead">Your Wishlist is empty.</p>
         </div>
       ) : (
         <>

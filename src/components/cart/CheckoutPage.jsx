@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
 
-const CheckoutPage = ({ setShowCheckout }) => {
+const CheckoutPage = ({ setShowCheckout, quotation }) => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -19,15 +19,14 @@ const CheckoutPage = ({ setShowCheckout }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Checkout Data:", formData);
+    console.log("Checkout Data:", { ...formData, quotation });
     alert("Order placed successfully!");
-    setShowCheckout(false); // Hide checkout after placing order
+    setShowCheckout(false); 
   };
 
   return (
     <div className="checkout-page container checkout-container  p-4" style={{ zIndex: 1050, overflowY: "auto" }}>
-      <div className="checkout-card shadow-lg p-4  rounded ">
- 
+      <div className="checkout-card shadow-lg p-4 rounded">
         {/* Close Button */}
         <button 
           className="btn btn-light position-absolute top-0 end-0 m-3 border" 
@@ -37,13 +36,25 @@ const CheckoutPage = ({ setShowCheckout }) => {
         </button>
 
         <h2 className="text-center mb-4 fw-bold">Checkout</h2>
+
+        {/* Order Summary */}
+        {quotation && (
+          <div className="alert alert-info">
+            <strong>Product:</strong> {quotation.product?.sparePartId?.name} <br />
+            <strong>Supplier:</strong> {quotation.supplierId?.storeName} <br />
+            <strong>Quantity:</strong> {quotation.product?.quantity} <br />
+            <strong>Total:</strong> ₹{quotation.product?.totalPrice}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
-          {/* Personal Information */}
+          {/* Personal Info */}
           <div className="section-header">
             <FaUser className="section-icon" /> Personal Information
           </div>
 
-          <div className="mb-3">
+          <div className="row">
+            <div className="mb-3 col-sm-6">
             <label className="form-label">Full Name</label>
             <input
               type="text"
@@ -56,7 +67,7 @@ const CheckoutPage = ({ setShowCheckout }) => {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-3 col-sm-6">
             <label className="form-label">Phone Number</label>
             <input
               type="tel"
@@ -69,7 +80,7 @@ const CheckoutPage = ({ setShowCheckout }) => {
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 col-sm-6">
             <label className="form-label">Email Address</label>
             <input
               type="email"
@@ -81,8 +92,9 @@ const CheckoutPage = ({ setShowCheckout }) => {
               required
             />
           </div>
+          </div>
 
-          {/* Delivery Address */}
+          {/* Address */}
           <div className="section-header">
             <FaMapMarkerAlt className="section-icon" /> Delivery Address
           </div>
@@ -139,7 +151,11 @@ const CheckoutPage = ({ setShowCheckout }) => {
           </div>
 
           {/* Submit */}
-          <button type="submit" className="btn btn-primary btn-lg w-100 mt-3">
+          <button
+            type="submit"
+            className="btn btn-lg w-100 mt-3 text-white"
+            style={{ backgroundColor: "#05976A" }}
+          >
             Place Order
           </button>
         </form>

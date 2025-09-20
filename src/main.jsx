@@ -36,6 +36,7 @@ import Dashboard from './pages/supplier/Dashboard.jsx';
 import Quotations from './pages/supplier/Quotations.jsx';
 import AddProduct from './pages/supplier/AddProduct.jsx';
 import SupplierProducts from './pages/supplier/SupplierProducts.jsx';
+import QuotationPage from './components/quotation/QuotationPage.jsx';
 function Root() {
   const location = useLocation();
 
@@ -106,7 +107,12 @@ function Root() {
           <ProtectedRoute allowedRole="mechanic">
             <MapView />
           </ProtectedRoute>} />
-        <Route path="/cartpage" element={<ProtectedRoute allowedRole="mechanic">
+          <Route path="/quotations" element={
+          <ProtectedRoute allowedRole="mechanic">
+            <QuotationPage/>
+          </ProtectedRoute>} />
+          
+        <Route path="/wishlist" element={<ProtectedRoute allowedRole="mechanic">
           <CartPage />
         </ProtectedRoute>} />
         <Route path="/order-history" element={<ProtectedRoute allowedRole="mechanic">
