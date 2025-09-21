@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaTimes } from "react-icons/fa";
+import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 
 const CheckoutPage = ({ setShowCheckout, quotation }) => {
   const [formData, setFormData] = useState({
@@ -19,11 +20,65 @@ const CheckoutPage = ({ setShowCheckout, quotation }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Checkout Data:", { ...formData, quotation });
-    alert("Order placed successfully!");
+    const dataToBeSent = {
+      personalDetails:{
+        name:formData.name,
+        phoneNumber:formData.phone,
+        email:formData.email
+      },
+      address:{
+        streetAddress:formData.address,
+        city:formData.city,
+        pincode:formData.zip,
+        state:formData.state
+      },
+      mechanicId:JSON.parse(localStorage.getItem("user")),
+      supplierId:quotation.supplierId._id,
+      quotationId:quotation._id,
+    }
+    loadRazorpay(dataToBeSent,quotation.product.totalPrice);
     setShowCheckout(false); 
   };
+  const loadRazorpay =(dataTobeSent,totalPrice)=>{
+    const options = {
+      key: "rzp_test_y8tz61noZGTrr8", // Replace with your Razorpay key
+      amount: totalPrice*100, // Amount in paise (₹500)
+      currency: "INR",
+      name: "SpareLink",
+      description: "Test Transaction",
+     // Optional
+      // handler: async function (response) {
+      //   alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+      //   const res=await axiosInstance.post(`${BASE_URL}api/order/create-order`,dataTobeSent);
+        
+      //   // You can send this response to your backend for verification
+      // },
+      handler: async (response)=>{
+        try{
+          const res=await axiosInstance.post(`${BASE_URL}api/order/create-order`,dataTobeSent);
+          if(res.status==201 ||  res.status==200){
+            alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+          } 
+        }catch(error){
+          console.log(`Error ${error}`);
+        }
+      },
+      prefill: {
+        name: `${formData.name}`,
+        email: `${formData.email}`,
+        contact: `${formData.phone}`,
+      },
+      notes: {
+        address: "Corporate Office",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
 
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  }
   return (
     <div className="checkout-page container checkout-container  p-4" style={{ zIndex: 1050, overflowY: "auto" }}>
       <div className="checkout-card shadow-lg p-4 rounded">

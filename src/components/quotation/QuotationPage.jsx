@@ -19,7 +19,7 @@ const QuotationPage = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axiosInstance.get("/api/quotation/get-quotation-ofMechanic");
+      const res = await axiosInstance.get("/api/quotation/get-quotation/mechanic");
       if (res.status === 200) setQuotations(res.data.data || []);
     } catch (err) {
       setError("Failed to fetch quotations. Please try again.");
@@ -88,7 +88,10 @@ const QuotationPage = () => {
   const handleCheckout = (quotation) => {
     setCheckoutData(quotation);
     setShowCheckout(true);
+    
   };
+
+
 
   // ✅ Compare Data
   const compareData = quotations.filter((q) => selected.includes(q._id));
@@ -150,7 +153,7 @@ const QuotationPage = () => {
               onChange={(e) => setFilter({ ...filter, supplier: e.target.value })}
             >
               <option value="">All Suppliers</option>
-              {[...new Set(quotations.map((q) => q.supplierId?.storeName))].map(
+              {[...new Set(quotations.map((q) => q.supplierId?.name))].map(
                 (supplier, idx) =>
                   supplier && (
                     <option key={idx} value={supplier}>
@@ -240,7 +243,7 @@ const QuotationPage = () => {
               >
                 <div className="card-body">
                   <h6 className="fw-bold">{q.product?.sparePartId?.name || "Product"}</h6>
-                  <p className="mb-1">Supplier: {q.supplierId?.storeName || "N/A"}</p>
+                  <p className="mb-1">Supplier: {q.supplierId?.name || "N/A"}</p>
                   <p className="mb-1">Quantity: {q.product?.quantity}</p>
                   <p className="mb-1">Unit Price: ₹{q.product?.perUnitPrice}</p>
                   <p className="fw-bold" style={{ color: "#05976A" }}>
@@ -307,7 +310,8 @@ const QuotationPage = () => {
                       style={{ backgroundColor: isBestPrice ? "#e6f9ec" : "#fff" }}
                     >
                       <h6 className="fw-bold mb-2">{q.product?.sparePartId?.name}</h6>
-                      <p className="mb-1"><strong>Supplier:</strong> {q.supplierId?.storeName}</p>
+                      
+                      <p className="mb-1"><strong>Supplier:</strong> {q.supplierId?.name}</p>
                       <p className="mb-1"><strong>Quantity:</strong> {q.product?.quantity}</p>
                       <p className="mb-1">
                         <strong>Unit Price:</strong> ₹{q.product?.perUnitPrice}{" "}

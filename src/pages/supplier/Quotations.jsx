@@ -117,7 +117,7 @@ const Quotations = () => {
 
   const handleReject = async (quotationId) => {
     try {
-      const response = await axiosInstance.delete(
+      const response = await axiosInstance.patch(
         `${BASE_URL}api/quotation/reject-quotation/${quotationId}/rejected`
       );
       if (response.status === 200) {
