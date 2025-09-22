@@ -35,7 +35,11 @@ const QuotationPage = () => {
   // ✅ Handle Checkbox Select
   const handleCheckbox = (id) => {
     setSelected((prev) =>
-      prev.includes(id) ? prev.filter((s) => s !== id) : prev.length < 3 ? [...prev, id] : prev
+      prev.includes(id)
+        ? prev.filter((s) => s !== id)
+        : prev.length < 3
+        ? [...prev, id]
+        : prev
     );
   };
 
@@ -52,17 +56,12 @@ const QuotationPage = () => {
         if (filter.days && (now - createdAt) / (1000 * 60 * 60 * 24) > parseInt(filter.days))
           return false;
 
-        // Product name filter (dropdown)
         if (filter.product && q.product?.sparePartId?.name !== filter.product) return false;
 
-        // Search input filter
         if (filter.productSearch && !q.product?.sparePartId?.name.toLowerCase().includes(filter.productSearch.toLowerCase()))
           return false;
 
-        if (
-          filter.supplier &&
-          !q.supplierId?.storeName?.toLowerCase().includes(filter.supplier.toLowerCase())
-        )
+        if (filter.supplier && !q.supplierId?.storeName?.toLowerCase().includes(filter.supplier.toLowerCase()))
           return false;
 
         return true;
@@ -88,10 +87,7 @@ const QuotationPage = () => {
   const handleCheckout = (quotation) => {
     setCheckoutData(quotation);
     setShowCheckout(true);
-    
   };
-
-
 
   // ✅ Compare Data
   const compareData = quotations.filter((q) => selected.includes(q._id));
@@ -99,7 +95,7 @@ const QuotationPage = () => {
   return (
     <div className="container py-4 min-vh-100">
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center ">
         <h2 className="fw-bold" style={{ color: "#05976A" }}>
           My Quotations
         </h2>
@@ -115,7 +111,6 @@ const QuotationPage = () => {
       {/* Filters */}
       <div className="card shadow-sm mb-4">
         <div className="card-body row g-3">
-          {/* Product Search Input */}
           <div className="col-lg-3 col-sm-6">
             <input
               type="text"
@@ -126,7 +121,6 @@ const QuotationPage = () => {
             />
           </div>
 
-          {/* Product Dropdown */}
           <div className="col-lg-3 col-sm-6">
             <select
               className="form-select"
@@ -145,7 +139,6 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          {/* Supplier Dropdown */}
           <div className="col-lg-3 col-sm-6">
             <select
               className="form-select"
@@ -164,7 +157,6 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          {/* Days Filter */}
           <div className="col-lg-3 col-sm-6">
             <select
               className="form-select"
@@ -178,7 +170,6 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          {/* Sort By */}
           <div className="col-lg-3 col-sm-6">
             <select
               className="form-select"
@@ -192,7 +183,6 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          {/* Sort Order */}
           <div className="col-lg-3 col-sm-6">
             <select
               className="form-select"
@@ -204,7 +194,6 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          {/* Clear Filters */}
           <div className="col-md-12">
             <button
               className="btn w-100"
@@ -234,12 +223,9 @@ const QuotationPage = () => {
       <div className="row">
         {filteredQuotations.length ? (
           filteredQuotations.map((q) => (
-            <div key={q._id} className="col-md-4 col-sm-6 col-lg-3 mb-3">
+            <div key={q._id} className="col-md-4 col-sm-6 col-lg-3 mb-3 ">
               <div
-                className={`card h-100 ${selected.includes(q._id) ? "border-2" : ""}`}
-                style={{
-                  borderColor: selected.includes(q._id) ? "#05976A" : "",
-                }}
+                className={`card h-100 border border-white ${selected.includes(q._id) ? "border-2" : ""}`}
               >
                 <div className="card-body">
                   <h6 className="fw-bold">{q.product?.sparePartId?.name || "Product"}</h6>
@@ -249,6 +235,7 @@ const QuotationPage = () => {
                   <p className="fw-bold" style={{ color: "#05976A" }}>
                     Total: ₹{q.product?.totalPrice}
                   </p>
+                  <p className="text-white">{new Date(q.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="card-footer bg-transparent d-flex flex-column gap-2">
                   <button
@@ -270,7 +257,7 @@ const QuotationPage = () => {
             </div>
           ))
         ) : (
-          <div className="text-center py-5">No quotations found.</div>
+          <div className="text-center text-white py-5">No quotations found.</div>
         )}
       </div>
 
@@ -300,34 +287,37 @@ const QuotationPage = () => {
               </button>
             </div>
 
-            <div className="row g-3">
-              {compareData.map((q) => {
-                const isBestPrice = q.product?.perUnitPrice === Math.min(...compareData.map(c => c.product?.perUnitPrice || Infinity));
-                return (
-                  <div key={q._id} className="col-md-4">
-                    <div
-                      className={`card h-100 p-3 ${isBestPrice ? "border-success border-2" : "border"} shadow-sm`}
-                      style={{ backgroundColor: isBestPrice ? "#e6f9ec" : "#fff" }}
-                    >
-                      <h6 className="fw-bold mb-2">{q.product?.sparePartId?.name}</h6>
-                      
-                      <p className="mb-1"><strong>Supplier:</strong> {q.supplierId?.name}</p>
-                      <p className="mb-1"><strong>Quantity:</strong> {q.product?.quantity}</p>
-                      <p className="mb-1">
-                        <strong>Unit Price:</strong> ₹{q.product?.perUnitPrice}{" "}
-                        {isBestPrice && <span className="badge bg-success ms-1">Best Price</span>}
-                      </p>
-                      <p className="fw-bold" style={{ color: "#05976A" }}>
-                        Total: ₹{q.product?.totalPrice}
-                      </p>
+            {compareData.length ? (
+              <div className="row g-3">
+                {compareData.map((q) => {
+                  const bestPrice = Math.min(...compareData.map(c => c.product?.perUnitPrice || Infinity));
+                  const isBestPrice = q.product?.perUnitPrice === bestPrice;
+                  return (
+                    <div key={q._id} className="col-md-4">
+                      <div
+                        className={`card h-100 p-3 ${isBestPrice ? "border-success border-2" : "border"} shadow-sm`}
+                        style={{ backgroundColor: isBestPrice ? "#e6f9ec" : "#fff" }}
+                      >
+                        <h6 className="fw-bold mb-2">{q.product?.sparePartId?.name}</h6>
+                        <p className="mb-1"><strong>Supplier:</strong> {q.supplierId?.name}</p>
+                        <p className="mb-1"><strong>Quantity:</strong> {q.product?.quantity}</p>
+                        <p className="mb-1">
+                          <strong>Unit Price:</strong> ₹{q.product?.perUnitPrice}{" "}
+                          {isBestPrice && <span className="badge bg-success ms-1">Best Price</span>}
+                        </p>
+                        <p className="fw-bold" style={{ color: "#05976A" }}>
+                          Total: ₹{q.product?.totalPrice}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-white text-center">No products selected for comparison.</p>
+            )}
           </div>
         </div>
-
       )}
     </div>
   );

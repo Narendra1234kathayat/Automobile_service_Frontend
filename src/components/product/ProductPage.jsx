@@ -111,6 +111,7 @@ const ProductPage = () => {
         product: {
           sparePartId: productId,
           quantity: quantity,
+          name:product.name,
         },
       };
 
@@ -164,9 +165,9 @@ const ProductPage = () => {
           <p>
             <span style={labelStyle}>Category:</span>{" "}
             {product.categoryId?.name} <br />
-            <span style={labelStyle}>Brand:</span>{" "}
+            <span style={labelStyle}>Car Brand:</span>{" "}
             {product.brandId?.map((b) => b.name).join(", ")} <br />
-            <span style={labelStyle}>Model:</span>{" "}
+            <span style={labelStyle}>Car Model:</span>{" "}
             {product.modelId?.map((m) => m.carModel).join(", ")}
           </p>
           <p>
@@ -243,8 +244,8 @@ const ProductPage = () => {
                     <p className="mb-2" style={{ color: "#adb5bd" }}>
                       📍 {sup.address?.street}, {sup.address?.city},{" "}
                       {sup.address?.state} <br />
-                      📞 {sup.phoneNumber} <br />
-                      ✉️ {sup.userId.email}
+                      📞 {sup.userId.phoneNumber} <br />
+                      <span className="fw-bold text-white">Email</span>  {sup.userId.email}
                     </p>
                     <button
                       className="btn btn-success w-100 mt-auto"

@@ -3,6 +3,8 @@ import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import ClipLoader from "react-spinners/ClipLoader";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -11,30 +13,35 @@ const ProfilePage = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [formData, setFormData] = useState({});
 
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({ duration: 800, easing: "ease-in-out", once: true });
+  }, []);
+
+  // Fetch profile function
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axiosInstance.get("/api/users/profile");
+      setUser(res.data.data);
+      setFormData({
+        ...res.data.data,
+        ...res.data.data.mechanicDetails,
+        ...res.data.data.supplierDetails,
+        ...res.data.data.mechanicDetails?.address,
+        ...res.data.data.supplierDetails?.address,
+      });
+    } catch (error) {
+      console.error("Profile fetch failed", error);
+      toast.error("Failed to load profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch profile on mount
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("authtoken");
-        const res = await axiosInstance.get("/api/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(res.data.data);
-        // Merge role-specific details for editing
-        setFormData({
-          ...res.data.data,
-          ...res.data.data.mechanicDetails,
-          ...res.data.data.supplierDetails,
-          ...res.data.data.mechanicDetails?.address,
-          ...res.data.data.supplierDetails?.address,
-        });
-      } catch (error) {
-        console.error("Profile fetch failed", error);
-        toast.error("Failed to load profile");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProfile();
   }, []);
 
@@ -44,54 +51,48 @@ const ProfilePage = () => {
   };
 
   const handleUpdate = async (e) => {
-  e.preventDefault();
-  setUpdateLoading(true);
+    e.preventDefault();
+    setUpdateLoading(true);
 
-  try {
-    const token = localStorage.getItem("authtoken");
-    const userid = JSON.parse(localStorage.getItem("user"));
+    try {
+      const token = localStorage.getItem("token");
+      const userid = JSON.parse(localStorage.getItem("user"));
 
-    // Create payload for user update
-    const userPayload = {
-      name: formData.name,
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      password: formData.password || undefined, // optional
-      address: {
-        street: formData.street,
-        city: formData.city,
-        state: formData.state,
-        country: formData.country,
-        pincode: formData.pincode,
-      },
-      // Role-specific fields
-      workShop: formData.workShop || formData.workshopName,
-      storeName: formData.storeName || formData.garageName,
-    };
+      const userPayload = {
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password || undefined,
+        address: {
+          street: formData.street,
+          city: formData.city,
+          state: formData.state,
+          country: formData.country,
+          pincode: formData.pincode,
+        },
+        workShop: formData.workShop || formData.workshopName,
+        storeName: formData.storeName || formData.garageName,
+      };
 
-    // Remove undefined fields (so empty values won't overwrite existing)
-    Object.keys(userPayload).forEach(
-      key => userPayload[key] === undefined && delete userPayload[key]
-    );
-    if (!userPayload.address || Object.keys(userPayload.address).length === 0) delete userPayload.address;
+      Object.keys(userPayload).forEach(
+        key => userPayload[key] === undefined && delete userPayload[key]
+      );
+      if (!userPayload.address || Object.keys(userPayload.address).length === 0) delete userPayload.address;
 
-    // Call backend API
-    const res = await axiosInstance.put(`/api/users/update-user/${userid}`, userPayload, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      await axiosInstance.put(`/api/users/update-user/${userid}`, userPayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    toast.success("Profile updated successfully!");
-    setUser({ ...user, ...formData }); // update frontend state
-    setEditMode(false);
-
-  } catch (error) {
-    console.error("Update failed", error);
-    toast.error("Failed to update profile");
-  } finally {
-    setUpdateLoading(false);
-  }
-};
-
+      toast.success("Profile updated successfully!");
+      await fetchProfile(); // fetch latest profile
+      setEditMode(false);
+    } catch (error) {
+      console.error("Update failed", error);
+      toast.error("Failed to update profile");
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -106,11 +107,12 @@ const ProfilePage = () => {
   return (
     <motion.div
       className="container my-5"
+      data-aos="fade-left"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="shadow-lg rounded-4 p-4" style={{ backgroundColor: "rgba(255,255,255,0.05)", backdropFilter: "blur(10px)" }}>
+      <div className="shadow-lg rounded-4 p-4 z-0" style={{ backgroundColor: "rgba(255,255,255,0.05)", backdropFilter: "blur(10px)" }}>
         
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -125,7 +127,7 @@ const ProfilePage = () => {
           </motion.button>
         </div>
 
-        {/* Form */}
+        {/* Form / View */}
         <motion.div
           key={editMode ? 'edit' : 'view'}
           initial={{ opacity: 0, y: 10 }}
@@ -216,7 +218,7 @@ const ProfilePage = () => {
 // View mode component
 const ProfileView = ({ user }) => {
   const Detail = ({ label, value }) => (
-    <div className="col-md-6">
+    <div className="col-md-6" data-aos="fade-left">
       <p className="mb-1 fw-bold text-white">{label}</p>
       <p className="form-control bg-dark text-white border-0">{value || "N/A"}</p>
     </div>
@@ -224,12 +226,10 @@ const ProfileView = ({ user }) => {
 
   return (
     <div className="row g-3">
-      
       <Detail label="Name" value={user.name} />
       <Detail label="Email" value={user.email} />
       <Detail label="Phone" value={user.phoneNumber} />
       <Detail label="Role" value={user.role} />
-      {/* <Detail label="Created At" value={new Date(user.createdAt).toLocaleString()} /> */}
 
       {user.role?.toLowerCase() === "mechanic" && user.mechanicDetails && (
         <>

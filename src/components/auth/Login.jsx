@@ -59,6 +59,7 @@ function Login() {
         const role = response.data.data.roleId.roleName;
         
         // Store user data
+        localStorage.setItem('name', response.data.data.name);
         localStorage.setItem('token', response.data.authtoken);
         localStorage.setItem('user',JSON.stringify(response.data.data._id));
         localStorage.setItem('role', JSON.stringify(response.data.data.roleId.roleName));

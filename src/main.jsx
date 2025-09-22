@@ -6,7 +6,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // react redux
 import { Provider } from 'react-redux';
-import store from './Store/redux/Store.js';
+import { PersistGate } from 'redux-persist/integration/react';
+import {store,persistor} from './Store/redux/Store.js';
 
 import ProtectedRoute from './components/protectroute/ProtectedRoute.jsx'
 // src/main.jsx or src/main.tsx
@@ -112,7 +113,7 @@ function Root() {
             <QuotationPage/>
           </ProtectedRoute>} />
           
-        <Route path="/wishlist" element={<ProtectedRoute allowedRole="mechanic">
+        <Route path="/restock" element={<ProtectedRoute allowedRole="mechanic">
           <CartPage />
         </ProtectedRoute>} />
         <Route path="/order-history" element={<ProtectedRoute allowedRole="mechanic">
@@ -150,9 +151,11 @@ function Root() {
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
     <BrowserRouter>
       <Root />
     </BrowserRouter>
+    </PersistGate>
   </Provider>
 
 )

@@ -4,6 +4,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -19,7 +20,7 @@ const SpareParts = () => {
     AOS.init({
       duration: 800,
       easing: "ease-in-out",
-      once: false, // set false to animate on both scroll down and up
+      once: false,
     });
     AOS.refresh();
   }, []);
@@ -79,43 +80,51 @@ const SpareParts = () => {
     return `₹${Number(price).toLocaleString("en-IN")}`;
   };
 
-  // Custom Arrow Components
+  // Custom Left Arrow
   const CustomLeftArrow = ({ onClick }) => (
     <button
       onClick={onClick}
-      className="btn btn-dark rounded-circle position-absolute"
+      className="btn btn-dark rounded-circle position-absolute d-flex justify-content-center align-items-center"
       style={{
-        left: "-20px",
+        left: "10px",
         top: "50%",
         transform: "translateY(-50%)",
         zIndex: 10,
-        width: "40px",
-        height: "40px",
+        width: "45px",
+        height: "45px",
         border: "none",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
       }}
     >
-      <i className="fas fa-chevron-left text-white"></i>
+      <FaChevronLeft size={20} />
     </button>
   );
 
+  // Custom Right Arrow
   const CustomRightArrow = ({ onClick }) => (
     <button
       onClick={onClick}
-      className="btn btn-dark rounded-circle position-absolute"
+      className="btn btn-dark rounded-circle position-absolute d-flex justify-content-center align-items-center"
       style={{
-        right: "-20px",
+        right: "10px",
         top: "50%",
         transform: "translateY(-50%)",
         zIndex: 10,
-        width: "40px",
-        height: "40px",
+        width: "45px",
+        height: "45px",
         border: "none",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
       }}
     >
-      <i className="fas fa-chevron-right text-white"></i>
+      <FaChevronRight size={20} />
     </button>
+  );
+
+  // ✅ Deduplicate by name (case + trim safe)
+  const uniqueSpareParts = Array.from(
+    new Map(
+      spareParts.map((part) => [part.name?.trim().toLowerCase(), part])
+    ).values()
   );
 
   // Loading State
@@ -136,7 +145,7 @@ const SpareParts = () => {
   }
 
   // Empty State
-  if (spareParts.length === 0) {
+  if (uniqueSpareParts.length === 0) {
     return (
       <div className="container mt-4" data-aos="fade-up">
         <div className="d-flex justify-content-between align-items-center mb-3">
@@ -162,7 +171,7 @@ const SpareParts = () => {
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
         <h3 className="fs-1 text-white mb-2 mb-sm-0">
           Spare Parts
-          <span className="badge bg-success ms-3 fs-6">{spareParts.length}</span>
+          <span className="badge bg-success ms-3 fs-6">{uniqueSpareParts.length}</span>
         </h3>
         <button className="btn btn-outline-success btn-sm px-4" onClick={() => navigate("/spareparts")}>
           <i className="fas fa-arrow-right me-2"></i>
@@ -187,12 +196,12 @@ const SpareParts = () => {
           itemClass="carousel-item-padding-40-px"
           customLeftArrow={<CustomLeftArrow />}
           customRightArrow={<CustomRightArrow />}
-          showDots={spareParts.length > 4}
+          showDots={uniqueSpareParts.length > 4}
           swipeable={true}
           draggable={true}
           ssr={true}
         >
-          {spareParts.map((part, index) => {
+          {uniqueSpareParts.map((part, index) => {
             const partId = part.id || part._id || index;
             return (
               <div key={partId} className="px-2" data-aos="fade-up">

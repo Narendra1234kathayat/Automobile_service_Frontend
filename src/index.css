@@ -38,8 +38,8 @@ body {
   left: 0;
   right: 0;
   width: 95%;
-  z-index: 0;
-  overflow: hidden !important;
+  z-index: 9999;
+  /* overflow: hidden !important; */
   margin: 0 auto;
   border-radius: 10px;
   padding: 1rem 2rem;
@@ -140,6 +140,9 @@ body {
   background-color: #f0f0f0;
   color: #05976A;
   border-color: #05976A;
+}
+.dropdown-menu {
+  z-index: 2000 !important;
 }
 
 

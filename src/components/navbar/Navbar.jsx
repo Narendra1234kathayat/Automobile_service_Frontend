@@ -81,34 +81,22 @@ const Navbar = () => {
               <li className="nav-item mx-lg-2">
                 <Link
                   to="/"
-                  className={`nav-link ${
-                    activeItem === "Home" ? "active" : ""
-                  }`}
+                  className={`nav-link ${activeItem === "Home" ? "active" : ""
+                    }`}
                   onClick={() => setActiveItem("Home")}
                 >
                   Home
                 </Link>
               </li>
 
-              <li className="nav-item mx-lg-2">
-                <Link
-                  to="/order-history"
-                  className={`nav-link ${
-                    activeItem === "History" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveItem("History")}
-                >
-                  Orders
-                </Link>
-              </li>
+              
 
               {/* ✅ Quotation NavLink */}
               <li className="nav-item mx-lg-2">
                 <Link
                   to="/quotations"
-                  className={`nav-link ${
-                    activeItem === "Quotations" ? "active" : ""
-                  }`}
+                  className={`nav-link ${activeItem === "Quotations" ? "active" : ""
+                    }`}
                   onClick={() => setActiveItem("Quotations")}
                 >
                   Quotations
@@ -118,27 +106,26 @@ const Navbar = () => {
               {/* ✅ Wishlist instead of Cart */}
               <li className="nav-item mx-lg-2">
                 <Link
-                  to="/wishlist"
-                  className={`nav-link ${
-                    activeItem === "Wishlist" ? "active" : ""
-                  }`}
+                  to="/restock"
+                  className={`nav-link ${activeItem === "Wishlist" ? "active" : ""
+                    }`}
                   onClick={() => setActiveItem("Wishlist")}
                 >
-                  Wishlist
+                  ReStock
+                </Link>
+              </li>
+              <li className="nav-item mx-lg-2">
+                <Link
+                  to="/order-history"
+                  className={`nav-link ${activeItem === "History" ? "active" : ""
+                    }`}
+                  onClick={() => setActiveItem("History")}
+                >
+                  Orders
                 </Link>
               </li>
 
-              <li className="nav-item mx-lg-2">
-                <Link
-                  to="/profile"
-                  className={`nav-link ${
-                    activeItem === "Profile" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveItem("Profile")}
-                >
-                  Profile
-                </Link>
-              </li>
+              
             </ul>
 
             {/* 🔍 Search Input */}
@@ -152,6 +139,7 @@ const Navbar = () => {
               />
             </form>
 
+            {/* ✅ Auth Buttons */}
             {/* ✅ Auth Buttons */}
             <ul className="navbar-nav mt-2 mt-md-0">
               {!isLoggedIn ? (
@@ -174,13 +162,39 @@ const Navbar = () => {
                   </li>
                 </>
               ) : (
-                <li className="nav-item">
-                  <button className="btn btn-light" onClick={handleLogout}>
-                    Logout
+                <li className="nav-item dropdown position-relative">
+                  <button
+                    className="btn btn-light dropdown-toggle"
+                    id="profileDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {JSON.parse(localStorage.getItem("user"))?.name || "Profile"}
                   </button>
+                  <ul
+                    className="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="profileDropdown"
+                    style={{ zIndex: 2000 }}   // ✅ force on top
+                  >
+                    <li>
+                      <button className="dropdown-item" onClick={() => navigate("/profile")}>
+                        Profile
+                      </button>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <button className="dropdown-item text-danger" onClick={handleLogout}>
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
                 </li>
+
               )}
             </ul>
+
           </div>
         </div>
       </nav>

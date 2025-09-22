@@ -113,9 +113,16 @@ const SparePartsPage = () => {
     setSearchTerm("");
     setModels([]); // reset models dropdown
   };
+  // ✅ Deduplicate products by name (ignoring case + spaces)
+const uniqueParts = Array.from(
+  new Map(
+    spareParts.map((part) => [part.name?.trim().toLowerCase(), part])
+  ).values()
+);
+
 
   // ✅ Filtering spare parts
-  const filteredParts = spareParts.filter((part) => {
+  const filteredParts = uniqueParts.filter((part) => {
     const matchesCategory =
       selectedCategory === "All" || part.categoryId?.name === selectedCategory;
 
@@ -296,20 +303,13 @@ const SparePartsPage = () => {
                   <p className="card-text mb-1">
                     <strong>Price:</strong> ₹{part.price}
                   </p>
-                  <p
-                    className={`card-text fw-semibold ${part.availability === "Out of Stock"
-                        ? "text-danger"
-                        : "text-success"
-                      }`}
-                  >
-                    <strong>Availability:</strong> {part.availability}
-                  </p>
+                  
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-center text-muted">No spare parts found.</p>
+          <p className="text-center text-white">No spare parts found.</p>
         )}
 
       </div>

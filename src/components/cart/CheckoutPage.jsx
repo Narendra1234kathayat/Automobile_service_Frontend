@@ -59,6 +59,7 @@ const CheckoutPage = ({ setShowCheckout, quotation }) => {
           if(res.status==201 ||  res.status==200){
             alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
           } 
+          
         }catch(error){
           console.log(`Error ${error}`);
         }

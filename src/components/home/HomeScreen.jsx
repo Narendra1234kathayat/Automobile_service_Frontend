@@ -52,8 +52,7 @@ const HomeScreen = () => {
             <p
               className="lead mb-4"
               style={{ fontSize: "1.2rem" }}
-              data-aos="fade-up"
-              data-aos-delay="200"
+              
             >
               Browse users, service centers, and hardware shops with ease.
             </p>

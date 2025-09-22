@@ -13,6 +13,119 @@ import {
   ArcElement
 } from "chart.js";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const handleViewPayslip = (order, role) => {
+  const doc = new jsPDF();
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  // Add watermark
+  doc.setFontSize(60);
+  doc.setTextColor(200, 200, 200);
+  doc.text("SpareLink", pageWidth / 2, pageHeight / 2, {
+    align: "center",
+    angle: 45,
+  });
+
+  // Reset color and font
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Order Payslip", pageWidth / 2, 20, { align: "center" });
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Order ID: ${order._id}`, 14, 30);
+  doc.text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 14, 38);
+  // doc.text(`Status: ${order.status || "Unknown"}`, 14, 46);
+
+  // Customer / Mechanic info
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Customer / Mechanic Info", 14, 56);
+
+  const mechanic = order.mechanicId ? order.personalDetails : null;
+  const address = order.address || {};
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Name: ${mechanic?.name || "Unknown"}`, 14, 64);
+  doc.text(`Email: ${mechanic?.email || "Unknown"}`, 14, 70);
+  doc.text(`Phone: ${mechanic?.phoneNumber || "Unknown"}`, 14, 76);
+  doc.text(
+    `Address: ${address.streetAddress || ""}, ${address.city || ""}, ${address.state || ""} - ${address.pincode || ""}`,
+    14,
+    82,
+    { maxWidth: pageWidth - 28 }
+  );
+
+  // Product details table
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Product Details", 14, 92);
+
+  autoTable(doc, {
+    startY: 96,
+    head: [["Product", "Qty", "Unit Price (₹)", "Discount (%)", "Total (₹)"]],
+    body: [
+      [
+        order.quotationId?.product?.sparePartId?.name || "Unknown",
+        order.quotationId?.product?.quantity || 0,
+        order.quotationId?.product?.perUnitPrice || 0,
+        order.quotationId?.product?.discountPercentage || 0,
+        order.quotationId?.product?.totalPrice || 0,
+      ],
+    ],
+    headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+    theme: "grid",
+  });
+
+  const finalY = doc.lastAutoTable.finalY + 5;
+
+  // Product description
+  const description = order.quotationId?.product?.sparePartId?.description || "";
+  if (description) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text("Description:", 14, finalY);
+    doc.text(description, 14, finalY + 6, { maxWidth: pageWidth - 28 });
+  }
+
+  // Payment & delivery
+  const pdY = finalY + (description ? 20 : 10);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Payment & Delivery", 14, pdY+3);
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Payment Terms: ${order.quotationId?.paymentTerms || ""}`, 14, pdY + 8);
+  doc.text(`Delivery Time: ${order.quotationId?.deliveryDate || ""}`, 14, pdY + 14);
+
+  // Additional notes
+  if (order.quotationId?.additionalNotes) {
+    const notesY = pdY + 24;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(" Additional Notes", 14, notesY);
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(order.quotationId.additionalNotes, 14, notesY + 6, { maxWidth: pageWidth - 28 });
+  }
+
+  // Open PDF in new tab
+  doc.output("dataurlnewwindow");
+};
+
+
+
+
 
 ChartJS.register(
   CategoryScale,
@@ -26,23 +139,50 @@ ChartJS.register(
   Legend
 );
 
+
 const OrderHistory = () => {
-  // const orders = [
-  //   { id: "ORD001", date: "2025-08-01", product: "Brake Pad Set", quantity: 2, price: 1500, total: 3000, status: "Delivered" },
-  //   { id: "ORD002", date: "2025-07-20", product: "Engine Oil", quantity: 3, price: 800, total: 2400, status: "Delivered" },
-  //   { id: "ORD003", date: "2025-07-05", product: "Air Filter", quantity: 1, price: 1200, total: 1200, status: "Delivered" },
-  //   { id: "ORD004", date: "2025-06-28", product: "Car Battery", quantity: 1, price: 6500, total: 6500, status: "Delivered" },
-  //   { id: "ORD005", date: "2025-06-15", product: "Spark Plug", quantity: 4, price: 350, total: 1400, status: "Delivered" },
-  //   { id: "ORD006", date: "2025-05-30", product: "Brake Fluid", quantity: 2, price: 450, total: 900, status: "Delivered" },
-  //   { id: "ORD007", date: "2025-05-18", product: "Radiator", quantity: 1, price: 4500, total: 4500, status: "Delivered" },
-  //    { id: "ORD003", date: "2025-07-05", product: "Air Filter", quantity: 1, price: 1200, total: 1200, status: "Delivered" },
-  //   { id: "ORD004", date: "2025-06-28", product: "Car Battery", quantity: 1, price: 6500, total: 6500, status: "Delivered" },
-  //   { id: "ORD005", date: "2025-06-15", product: "Spark Plug", quantity: 4, price: 350, total: 1400, status: "Delivered" },
-  //   { id: "ORD008", date: "2025-05-01", product: "Windshield Wipers", quantity: 2, price: 700, total: 1400, status: "Delivered" },
-  //   { id: "ORD009", date: "2025-04-20", product: "Headlight Bulb", quantity: 2, price: 500, total: 1000, status: "Delivered" },
-  //   { id: "ORD010", date: "2025-04-05", product: "Air Conditioner Filter", quantity: 1, price: 1800, total: 1800, status: "Delivered" }
-  // ];
+  const loginrole = JSON.parse(localStorage.getItem("role"));
+  const [role, setRole] = useState();
   const [orders, setOrders] = useState([]);
+  
+
+  const handleDownloadExcel = () => {
+    // 1. Prepare data
+    const exportData = orders.map((order) => ({
+      Date: new Date(order.createdAt).toLocaleDateString(),
+      Product: order.quotationId?.product?.sparePartId?.name || "Unknown",
+      Quantity: order.quotationId?.product?.quantity || 0,
+      "Unit Price (₹)": order.quotationId?.product?.perUnitPrice || 0,
+      "Total Price (₹)": order.quotationId?.product?.totalPrice || 0,
+      [role]: role === "Supplier" ? order.supplierId?.name : order.mechanicId?.name,
+
+    }));
+
+    // 2. Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    // 3. Create workbook and append worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+    // 4. Write workbook and download
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "orders.xlsx");
+  };
+  
+
+  useEffect(() => {
+    if (loginrole === "supplier") {
+      setRole("Mechanic");
+    } else {
+      setRole("Supplier");
+    }
+  }, [loginrole]);
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -127,14 +267,14 @@ const OrderHistory = () => {
     ]
   };
 
-   const chartOptions = {
+  const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { position: "top" } }
   };
 
   return (
-    <div className="container my-5">
+    <div className="container my-lg-5">
       <h3 className="mb-4 text-center text-lg-start text-light">📦 Order History Statistics</h3>
 
       {/* Charts Section */}
@@ -168,25 +308,33 @@ const OrderHistory = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="card shadow-sm p-3 mt-4">
+      <div className="card row shadow-sm p-3 mt-4">
         <h5 className="mb-3">Order Details</h5>
-        <div className="table-responsive">
+
+        <div className="d-flex justify-content-end mb-2">
+          <button className="btn btn-success" onClick={handleDownloadExcel}>
+            Download Excel
+          </button>
+        </div>
+
+        <div className="col-12 table-responsive">
           <table className="table table-striped table-bordered table-hover align-middle">
             <thead className="table-dark text-center">
               <tr>
-                <th>Order ID</th>
+
                 <th>Date</th>
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Price (₹)</th>
                 <th>Total (₹)</th>
-                <th>Status</th>
+                <th>{role}</th>
+                <th>Slip</th>
               </tr>
             </thead>
             <tbody className="text-center">
               {orders.map(order => (
                 <tr key={order._id}>
-                  <td>{order._id}</td>
+
                   <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td>{order.quotationId?.product?.sparePartId?.name || "Unknown"}</td>
                   <td>{order.quotationId?.product?.quantity}</td>
@@ -194,9 +342,18 @@ const OrderHistory = () => {
                   <td>{order.quotationId?.product?.totalPrice}</td>
                   <td>
                     <span className={`badge ${order.status === "Delivered" ? "bg-success" : "bg-warning"}`}>
-                      {order.status}
+                      {role === "Supplier" ? order.supplierId?.name : order.mechanicId?.name}
                     </span>
                   </td>
+                  <td>
+                    <button
+                      className="btn btn-info btn-sm"
+                      onClick={() => handleViewPayslip(order, role)}
+                    >
+                      Download Payslip
+                    </button>
+                  </td>
+
                 </tr>
               ))}
             </tbody>

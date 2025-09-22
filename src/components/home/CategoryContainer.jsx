@@ -7,7 +7,7 @@ import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 const CategoryContainer = () => {
   const [search, setSearch] = useState("");
   const [brands, setBrands] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(1); // ✅ Show 10 by default
+  const [visibleCount, setVisibleCount] = useState(4); // ✅ Show 10 by default
   const navigate = useNavigate();
 
   // ✅ Initialize AOS once
