@@ -10,13 +10,34 @@ html {
   scroll-behavior: smooth ;
   scroll-margin: 0;
 }
-body, html {
-  overflow-x: hidden; /* ✅ Hide horizontal scroll globally */
+html ,body{
+  overflow-x: hidden !important;
 }
-  
+
+table{
+  overflow-x: scroll !important;
+}
+table th, table td {
+  white-space: nowrap;
+  padding: 4px 8px;
+}
 .mainbox {
   width: 100vw;
 
+}
+.container{
+  padding: 0;
+}
+@media (max-width: 480px) {
+  body {
+    font-size: 0.875rem; /* 14px */
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    font-size: 0.75rem; /* 12px */
+  }
 }
 
 body {
@@ -27,7 +48,7 @@ body {
   
   width: 100%;
   min-height: 100vh;
-  overflow-x: hidden;
+  
 
 }
 
@@ -280,10 +301,7 @@ body {
 
 
 
-/* sidebar */
-/* .sidebar {
-  
-} */
+
 
 @media (max-width: 968px) {
   .sidebar {
@@ -349,10 +367,7 @@ body {
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-  .container {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
+ 
   
   .model-card {
     margin-bottom: 1rem;
@@ -498,24 +513,24 @@ body {
   pointer-events: none;
 }
 
-
-/* Keyframes to move left → right → left */
 @keyframes moveCar {
   0% {
-    left: 0px;   /* Start outside left */
-  }
-  50% {
-    left: 100%;     /* Move to right outside */
+    left: 0px;      /* Start outside left */
     transform: scaleX(1); /* Facing right */
   }
-  51% {
-    transform: scaleX(-1); /* Flip horizontally to face left */
+  50% {
+    left: calc(92%);  /* Move to right edge */
+    transform: scaleX(1); /* Still facing right */
+  }
+  50.1% {
+    transform: scaleX(-1); /* Flip to face left */
   }
   100% {
-    left: -10px;   /* Move back outside left */
-    transform: scaleX(-1);
+    left: 0px;       /* Back to left outside */
+    transform: scaleX(-1); /* Facing left */
   }
 }
+
 
 
 

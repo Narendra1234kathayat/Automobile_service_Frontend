@@ -14,7 +14,7 @@ const SupplierLayout = () => {
       <SupplierSidebar />
 
       {/* Main Content */}
-      <main className="flex-grow-1 p-sm-4 sidebar" style={{ marginLeft: !isopen ? "240px" : "0", transition: "margin-left 0.3s" }}>
+      <main className="flex-grow-1  sidebar container" style={{ marginLeft: !isopen ? "240px" : "0", transition: "margin-left 0.3s" }}>
         <Outlet />
       </main>
     </div>

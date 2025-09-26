@@ -143,8 +143,8 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="container my-2">
-      <h2 className="mb-4 text-white">
+    <div className="container my-4">
+      <h2 className="mb-4 text-white text-center">
         {editingProduct ? "Update Spare Part" : "Add Spare Part"}
       </h2>
 

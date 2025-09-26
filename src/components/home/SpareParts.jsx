@@ -168,7 +168,7 @@ const SpareParts = () => {
   return (
     <div className="container mt-4" data-aos="fade-up">
       {/* Header */}
-      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
+      <div className="d-flex  flex-row justify-content-between align-items-start align-items-sm-center mb-4">
         <h3 className="fs-1 text-white mb-2 mb-sm-0">
           Spare Parts
           <span className="badge bg-success ms-3 fs-6">{uniqueSpareParts.length}</span>
@@ -266,7 +266,7 @@ const SpareParts = () => {
             </>
           ) : (
             <>
-              <i className="fas fa-sync-alt me-2"></i>
+              <i className="fas fa-sync-alt "></i>
               Refresh
             </>
           )}

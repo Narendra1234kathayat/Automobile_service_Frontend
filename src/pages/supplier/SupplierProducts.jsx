@@ -80,14 +80,14 @@ const SupplierProducts = () => {
   );
 
   return (
-    <div className="container">
+    <div className="container mt-4">
       <div className="mb-4 d-sm-flex justify-content-between align-items-center flex-wrap gap-2">
   <h2 className="mb-0 text-white">My Spare Parts</h2>
 
   <div style={{ maxWidth: "300px", flex: "1 1 auto" }}>
     <input
       type="text"
-      className="form-control form-control-sm"
+      className="form-control form-control-sm mt-sm-0 mt-3"
       placeholder="🔍 Search by name, category, or brand..."
       value={search}
       onChange={(e) => setSearch(e.target.value)}

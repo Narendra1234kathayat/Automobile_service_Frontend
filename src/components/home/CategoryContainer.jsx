@@ -60,7 +60,7 @@ const CategoryContainer = () => {
       <div className="row">
         {visibleBrands.map((brand, i) => (
           <div
-            className="category col-md-4 col-lg-3 col-sm-6 mb-4"
+            className="category col-md-4 col-lg-3 col-6 mb-4"
             key={i}
             data-aos="flip-left"
             data-aos-delay={i * 100}

@@ -42,11 +42,11 @@ const HomeScreen = () => {
             data-aos="zoom-in"
           >
             <h1
-              className="display-5 fw-bold mb-3"
+              className="display-5 fw-sm-bold  mb-3"
               style={{ color: "#05976A" }}
               data-aos="fade-down"
             >
-              Welcome to SpareLink!
+              Welcome Mechanic to SpareLink!
             </h1>
 
             <p
@@ -111,7 +111,7 @@ const HomeScreen = () => {
         data-aos="fade-up"
         data-aos-delay="200"
       >
-        <StoreContainer />
+        {/* <StoreContainer /> */}
       </div>
     </div>
   );

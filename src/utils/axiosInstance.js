@@ -1,10 +1,10 @@
 import axios from "axios";
 
 
-export const BASE_URL = "http://localhost:5000/"; // Replace with your backend base URL
+export const BASE_URL = "https://sparelink-backend-al5v.onrender.com/"; // Replace with your backend base URL
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/", // Replace with your backend base URL
+  baseURL: "https://sparelink-backend-al5v.onrender.com/", // Replace with your backend base URL
   timeout: 5000,
   
   headers: {

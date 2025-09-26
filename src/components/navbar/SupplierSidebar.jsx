@@ -11,7 +11,7 @@ const SupplierSidebar = () => {
   if(user){
     
       SocketUser.emit("register", user);
-      console.log("User registered to socket with ID:", user);
+    //   console.log("User registered to socket with ID:", user);
     
   }
   
@@ -76,14 +76,14 @@ const SupplierSidebar = () => {
                 </div>
             )}
 
-            {/* Overlay (mobile only) */}
+            {/* Overlay (mobile only)
             {isOpen && (
                 <div
                     className="position-fixed top-0 start-0 w-100 h-100"
                     style={{ zIndex: 1030 }}
                     onClick={() => dispatch(closeSidebar())}
                 ></div>
-            )}
+            )} */}
         </>
     );
 };

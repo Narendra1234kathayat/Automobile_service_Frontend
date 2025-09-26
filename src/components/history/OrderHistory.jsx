@@ -100,7 +100,7 @@ const handleViewPayslip = (order, role) => {
   const pdY = finalY + (description ? 20 : 10);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("Payment & Delivery", 14, pdY+3);
+  doc.text("Payment & Delivery", 14, pdY + 3);
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
@@ -144,7 +144,7 @@ const OrderHistory = () => {
   const loginrole = JSON.parse(localStorage.getItem("role"));
   const [role, setRole] = useState();
   const [orders, setOrders] = useState([]);
-  
+
 
   const handleDownloadExcel = () => {
     // 1. Prepare data
@@ -173,7 +173,7 @@ const OrderHistory = () => {
     const data = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(data, "orders.xlsx");
   };
-  
+
 
   useEffect(() => {
     if (loginrole === "supplier") {
@@ -274,13 +274,13 @@ const OrderHistory = () => {
   };
 
   return (
-    <div className="container my-lg-5">
+    <div className=" my-lg-5 container mt-4">
       <h3 className="mb-4 text-center text-lg-start text-light">📦 Order History Statistics</h3>
 
       {/* Charts Section */}
       <div className="row  g-4">
-        <div className=" col-md-6">
-          <div className="card shadow-sm p-3 h-100">
+        <div className=" col-sm-6">
+          <div className="card shadow-sm h-100">
             <h5 className="mb-3 text-center">Quantity Purchased by Product</h5>
             <div style={{ height: "270px" }}>
               <Bar data={barData} options={chartOptions} />
@@ -288,8 +288,8 @@ const OrderHistory = () => {
           </div>
         </div>
 
-        <div className="col-md-6 ">
-          <div className="card shadow-sm p-3 h-100">
+        <div className="col-sm-6 ">
+          <div className="card shadow-sm  h-100">
             <h5 className="mb-3 text-center">Spending Distribution by Product</h5>
             <div style={{ height: "270px" }}>
               <Pie data={pieData} options={chartOptions} />
@@ -298,7 +298,7 @@ const OrderHistory = () => {
         </div>
 
         <div className="col-12 ">
-          <div className="card shadow-sm p-3 h-100">
+          <div className="card shadow-sm  h-100">
             <h5 className="mb-3 text-center">Quantity Trend Over Time</h5>
             <div style={{ height: "300px" }}>
               <Line data={lineData} options={chartOptions} />
@@ -308,20 +308,21 @@ const OrderHistory = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="card row shadow-sm p-3 mt-4">
+      <div className="card shadow-sm p-3 mt-4">
+        <div className="d-flex justify-content-end mb-3">
         <h5 className="mb-3">Order Details</h5>
 
-        <div className="d-flex justify-content-end mb-2">
+        
           <button className="btn btn-success" onClick={handleDownloadExcel}>
             Download Excel
           </button>
         </div>
 
-        <div className="col-12 table-responsive">
-          <table className="table table-striped table-bordered table-hover align-middle">
-            <thead className="table-dark text-center">
+        {/* Table responsive wrapper */}
+        <div className="table-responsive row">
+          <table className=" table-striped table-bordered table-hover align-middle text-center">
+            <thead className="table-dark">
               <tr>
-
                 <th>Date</th>
                 <th>Product</th>
                 <th>Quantity</th>
@@ -331,18 +332,22 @@ const OrderHistory = () => {
                 <th>Slip</th>
               </tr>
             </thead>
-            <tbody className="text-center">
-              {orders.map(order => (
+            <tbody>
+              {orders.map((order) => (
                 <tr key={order._id}>
-
                   <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td>{order.quotationId?.product?.sparePartId?.name || "Unknown"}</td>
                   <td>{order.quotationId?.product?.quantity}</td>
                   <td>{order.quotationId?.product?.perUnitPrice}</td>
                   <td>{order.quotationId?.product?.totalPrice}</td>
                   <td>
-                    <span className={`badge ${order.status === "Delivered" ? "bg-success" : "bg-warning"}`}>
-                      {role === "Supplier" ? order.supplierId?.name : order.mechanicId?.name}
+                    <span
+                      className={`badge ${order.status === "Delivered" ? "bg-success" : "bg-warning"
+                        }`}
+                    >
+                      {role === "Supplier"
+                        ? order.supplierId?.name
+                        : order.mechanicId?.name}
                     </span>
                   </td>
                   <td>
@@ -353,14 +358,16 @@ const OrderHistory = () => {
                       Download Payslip
                     </button>
                   </td>
-
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+
     </div>
+
   );
 };
 

@@ -111,7 +111,7 @@ const Navbar = () => {
                     }`}
                   onClick={() => setActiveItem("Wishlist")}
                 >
-                  ReStock
+                  Restock
                 </Link>
               </li>
               <li className="nav-item mx-lg-2">
@@ -169,7 +169,7 @@ const Navbar = () => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {JSON.parse(localStorage.getItem("user"))?.name || "Profile"}
+                    {localStorage.getItem("name") || "Profile"}
                   </button>
                   <ul
                     className="dropdown-menu dropdown-menu-end"

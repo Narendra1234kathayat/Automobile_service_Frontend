@@ -248,6 +248,7 @@ const ProductPage = () => {
                       <span className="fw-bold text-white">Email</span>  {sup.userId.email}
                     </p>
                     <button
+                      type="button"
                       className="btn btn-success w-100 mt-auto"
                       onClick={() => openQuotationForm(sup)}
                     >
@@ -289,12 +290,14 @@ const ProductPage = () => {
             </div>
             <div className="d-flex justify-content-end">
               <button
+              type="button"
                 className="btn btn-secondary me-2"
                 onClick={() => setShowForm(false)}
               >
                 Cancel
               </button>
               <button
+                type="button"
                 className="btn btn-success"
                 onClick={handleQuotationSubmit}
               >

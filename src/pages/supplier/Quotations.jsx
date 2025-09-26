@@ -164,8 +164,9 @@ useEffect(() => {
   );
 
   return (
-    <div className="container mt-2 row">
-      <h2 className="mb-4 text-center text-light">Quotation Requests</h2>
+    <div className="mt-3  container ">
+      <div className="row ">
+        <h2 className="mb-4 text-center text-light">Quotation Requests</h2>
 
       {/* Filters */}
       <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
@@ -183,7 +184,7 @@ useEffect(() => {
       </div>
 
       {!selectedQuotation ? (
-        <div className="table-responsive col-12">
+        <div className="table-responsive ">
           <table className="table table-bordered table-hover">
             <thead className="table-dark">
               <tr>
@@ -217,7 +218,7 @@ useEffect(() => {
                       </span>
                     </td>
                     {actionableStatuses.includes(q.status) && hasActionable && (
-                      <td className="d-flex flex-wrap gap-2">
+                      <td className="d-flex flex-nowrap gap-2">
                         <button
                           className="btn btn-success btn-sm"
                           onClick={() => handleAccept(q)}
@@ -361,6 +362,7 @@ useEffect(() => {
           </form>
         </div>
       )}
+      </div>
     </div>
   );
 };

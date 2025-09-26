@@ -121,7 +121,7 @@ const QuotationPage = () => {
             />
           </div>
 
-          <div className="col-lg-3 col-sm-6">
+          <div className="col-lg-3 col-6">
             <select
               className="form-select"
               value={filter.product}
@@ -139,7 +139,7 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          <div className="col-lg-3 col-sm-6">
+          <div className="col-lg-3 col-6">
             <select
               className="form-select"
               value={filter.supplier}
@@ -157,7 +157,7 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          <div className="col-lg-3 col-sm-6">
+          <div className="col-lg-3 col-6">
             <select
               className="form-select"
               value={filter.days}
@@ -170,7 +170,7 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          <div className="col-lg-3 col-sm-6">
+          <div className="col-lg-3 col-6">
             <select
               className="form-select"
               value={sortBy}
@@ -183,7 +183,7 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          <div className="col-lg-3 col-sm-6">
+          <div className="col-lg-3 col-6">
             <select
               className="form-select"
               value={sortOrder}
@@ -194,7 +194,7 @@ const QuotationPage = () => {
             </select>
           </div>
 
-          <div className="col-md-12">
+          <div className="col-6">
             <button
               className="btn w-100"
               style={{ backgroundColor: "#05976A", color: "#fff" }}
@@ -223,7 +223,7 @@ const QuotationPage = () => {
       <div className="row">
         {filteredQuotations.length ? (
           filteredQuotations.map((q) => (
-            <div key={q._id} className="col-md-4 col-sm-6 col-lg-3 mb-3 ">
+            <div key={q._id} className="col-md-4 col-6 col-lg-3 mb-3 ">
               <div
                 className={`card h-100 border border-white ${selected.includes(q._id) ? "border-2" : ""}`}
               >
@@ -235,7 +235,7 @@ const QuotationPage = () => {
                   <p className="fw-bold" style={{ color: "#05976A" }}>
                     Total: ₹{q.product?.totalPrice}
                   </p>
-                  <p className="text-white">{new Date(q.createdAt).toLocaleString()}</p>
+                  <p className="text-white mb-0">{new Date(q.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="card-footer bg-transparent d-flex flex-column gap-2">
                   <button
@@ -293,7 +293,7 @@ const QuotationPage = () => {
                   const bestPrice = Math.min(...compareData.map(c => c.product?.perUnitPrice || Infinity));
                   const isBestPrice = q.product?.perUnitPrice === bestPrice;
                   return (
-                    <div key={q._id} className="col-md-4">
+                    <div key={q._id} className="col-md-4 col-6">
                       <div
                         className={`card h-100 p-3 ${isBestPrice ? "border-success border-2" : "border"} shadow-sm`}
                         style={{ backgroundColor: isBestPrice ? "#e6f9ec" : "#fff" }}
