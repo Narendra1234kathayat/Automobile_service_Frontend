@@ -111,7 +111,7 @@ const HomeScreen = () => {
         data-aos="fade-up"
         data-aos-delay="200"
       >
-        {/* <StoreContainer /> */}
+         <StoreContainer /> 
       </div>
     </div>
   );
