@@ -98,8 +98,9 @@ const ProductPage = () => {
 
   // Submit quotation request
   const handleQuotationSubmit = async () => {
-    if (!quantity || quantity <= 0) {
-      toast.error("⚠️ Please enter a valid quantity");
+    const qty = Number(quantity);
+    if (!qty || qty < 1 || qty > 100) {
+      toast.error("⚠️ Quantity must be between 1 and 100");
       return;
     }
     try {
@@ -111,7 +112,7 @@ const ProductPage = () => {
         product: {
           sparePartId: productId,
           quantity: quantity,
-          name:product.name,
+          name: product.name,
         },
       };
 
@@ -128,7 +129,7 @@ const ProductPage = () => {
         );
         setShowForm(false);
       }
-      
+
     } catch (error) {
       console.error("Quotation submit error:", error.response?.data || error.message);
       toast.error("❌ Failed to send quotation request");
@@ -283,14 +284,17 @@ const ProductPage = () => {
               <input
                 type="number"
                 min="1"
+                max="100"
                 className="form-control"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />
+              <small className="text-muted">Enter quantity between 1 and 100</small>
             </div>
+
             <div className="d-flex justify-content-end">
               <button
-              type="button"
+                type="button"
                 className="btn btn-secondary me-2"
                 onClick={() => setShowForm(false)}
               >

@@ -2,6 +2,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { removeItem } from "framer-motion";
 
 function ProtectedRoute({ children, allowedRole }) {
   const token = localStorage.getItem("token");
@@ -36,6 +37,8 @@ function ProtectedRoute({ children, allowedRole }) {
   } catch (err) {
     console.error("Invalid token:", err);
     localStorage.removeItem("token");
+    localStorage,removeItem("role");
+    localStorage.removeItem("user");
     return <Navigate to="/login" />;
   }
 }

@@ -100,7 +100,7 @@ const HomeScreen = () => {
         className="d-flex "
         
         style={{ whiteSpace: "nowrap" }}
-        data-aos="zoom-in"
+        data-aos="fade-left"
       >
         <CategoryContainer />
       </div>
@@ -108,7 +108,7 @@ const HomeScreen = () => {
       {/* Store Section */}
       <div
         className="row"
-        data-aos="fade-up"
+        data-aos="fade-left"
         data-aos-delay="200"
       >
          <StoreContainer /> 

@@ -1,324 +1,236 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import RightSideBanner from "./RightSideBanner.jsx";
 import { FaBuilding, FaMapMarkerAlt, FaArrowLeft, FaCheck } from "react-icons/fa";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
-const RegistrationDetail = ({ 
-  step, 
-  setStep, 
-  form, 
-  handleChange, 
-  handleSubmit, 
-  loading 
-}) => {
+const RegistrationDetail = ({ step, setStep, form, handleChange, handleSubmit, loading }) => {
+  const [errors, setErrors] = useState({});
 
-  // Animation variants
-  const slideVariants = {
-    hidden: { x: 50, opacity: 0 },
-    visible: { 
-      x: 0, 
-      opacity: 1,
-      transition: { duration: 0.6, ease: "easeOut" }
-    },
-    exit: { 
-      x: -50, 
-      opacity: 0,
-      transition: { duration: 0.4 }
+  useEffect(() => {
+    AOS.init({ duration: 600, once: true });
+  }, []);
+
+  const validateStep2 = () => {
+    const newErrors = {};
+
+    // Role-specific validation
+    if (form.role === "mechanic" && !form.workshopName.trim()) {
+      newErrors.workshopName = "Workshop name is required";
     }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
+    if (form.role === "supplier" && !form.garageName.trim()) {
+      newErrors.garageName = "Garage/Store name is required";
     }
-  };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+    // Address validation
+    if (!form.city.trim()) {
+      newErrors.city = "City is required";
     }
+    if (!form.state.trim()) {
+      newErrors.state = "State is required";
+    }
+    if (form.pincode && !/^\d{6}$/.test(form.pincode)) {
+      newErrors.pincode = "Pincode must be 6 digits";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    
-    // Additional validation before submission
-    if (form.role === "mechanic" && !form.workshopName.trim()) {
-      toast.error("Workshop name is required for mechanics");
+
+    if (!validateStep2()) {
+      toast.error("Please fix the errors before submitting");
       return;
     }
-    
-    if (form.role === "supplier" && !form.garageName.trim()) {
-      toast.error("Garage/Store name is required for suppliers");
-      return;
-    }
-    
-    // Call the parent's handleSubmit function
+
     await handleSubmit(e);
   };
 
   return (
-    <motion.div 
-      className="col-lg-6 col-12 align-items-center d-flex justify-content-center rightside-bg p-5"
-      variants={slideVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <AnimatePresence mode="wait">
-        {step === 1 ? (
-          <motion.div
-            key="banner"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.5 }}
-          >
-            <RightSideBanner />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="form"
-            className="w-100"
-            style={{ maxWidth: "420px" }}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+    <div className="col-lg-6 col-12 align-items-center d-flex justify-content-center rightside-bg p-5" data-aos="fade-left">
+      {step === 1 ? (
+        <div data-aos="fade-in">
+          <RightSideBanner />
+        </div>
+      ) : (
+        <div className="w-100" style={{ maxWidth: "420px" }} data-aos="fade-left">
+          {/* Header */}
+          <div className="d-flex justify-content-between align-items-center mb-4" data-aos="fade-down">
+            <div>
+              <h4 className="fw-bold text-white mb-1">Additional Details</h4>
+              <small className="text-muted">Complete your {form.role} profile</small>
+            </div>
+            <button
+              type="button"
+              className="btn btn-outline-light btn-sm rounded-pill px-3"
+              onClick={() => setStep(1)}
+              disabled={loading}
             >
-              {/* Header */}
-              <motion.div 
-                className="d-flex justify-content-between align-items-center mb-4"
-                variants={itemVariants}
-              >
-                <div>
-                  <h4 className="fw-bold text-white mb-1">Additional Details</h4>
-                  <small className="text-muted">Complete your {form.role} profile</small>
+              <FaArrowLeft className="me-1" /> Back
+            </button>
+          </div>
+
+          <form onSubmit={handleFormSubmit}>
+            {/* Role-specific fields */}
+            {form.role === "mechanic" && (
+              <div data-aos="fade-up">
+                <div className="mb-3">
+                  <label className="form-label text-light">
+                    <FaBuilding className="me-2" />
+                    Workshop Name *
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control bg-dark text-white border-0 ${errors.workshopName ? "border border-danger" : ""}`}
+                    name="workshopName"
+                    value={form.workshopName}
+                    onChange={handleChange}
+                    placeholder="Enter your workshop name"
+                  />
+                  {errors.workshopName && <small className="text-danger">{errors.workshopName}</small>}
                 </div>
-                <motion.button
-                  type="button"
-                  className="btn btn-outline-light btn-sm rounded-pill px-3"
-                  onClick={() => setStep(1)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  disabled={loading}
-                >
-                  <FaArrowLeft className="me-1" /> Back
-                </motion.button>
-              </motion.div>
 
-              <form onSubmit={handleFormSubmit}>
-                {/* Role-specific fields */}
-                <AnimatePresence mode="wait">
-                  {form.role === "mechanic" && (
-                    <motion.div
-                      key="mechanic-fields"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <motion.div className="mb-3" variants={itemVariants}>
-                        <label className="form-label text-light">
-                          <FaBuilding className="me-2" />
-                          Workshop Name *
-                        </label>
-                        <motion.input
-                          type="text"
-                          className="form-control bg-dark text-white border-0"
-                          name="workshopName"
-                          value={form.workshopName}
-                          onChange={handleChange}
-                          placeholder="Enter your workshop name"
-                          required
-                          whileFocus={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        />
-                      </motion.div>
+                <div className="mb-4">
+                  <label className="form-label text-light">Years of Experience (Optional)</label>
+                  <input
+                    type="number"
+                    className="form-control bg-dark text-white border-0"
+                    name="experience"
+                    value={form.experience}
+                    onChange={handleChange}
+                    placeholder="Enter years of experience"
+                    min="0"
+                    max="50"
+                  />
+                </div>
+              </div>
+            )}
 
-                      <motion.div className="mb-4" variants={itemVariants}>
-                        <label className="form-label text-light">
-                          Years of Experience (Optional)
-                        </label>
-                        <motion.input
-                          type="number"
-                          className="form-control bg-dark text-white border-0"
-                          name="experience"
-                          value={form.experience}
-                          onChange={handleChange}
-                          placeholder="Enter years of experience"
-                          min="0"
-                          max="50"
-                          whileFocus={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        />
-                      </motion.div>
-                    </motion.div>
-                  )}
+            {form.role === "supplier" && (
+              <div data-aos="fade-up">
+                <div className="mb-4">
+                  <label className="form-label text-light">
+                    <FaBuilding className="me-2" />
+                    Garage/Store Name *
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control bg-dark text-white border-0 ${errors.garageName ? "border border-danger" : ""}`}
+                    name="garageName"
+                    value={form.garageName}
+                    onChange={handleChange}
+                    placeholder="Enter your garage/store name"
+                  />
+                  {errors.garageName && <small className="text-danger">{errors.garageName}</small>}
+                </div>
+              </div>
+            )}
 
-                  {form.role === "supplier" && (
-                    <motion.div
-                      key="supplier-fields"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <motion.div className="mb-4" variants={itemVariants}>
-                        <label className="form-label text-light">
-                          <FaBuilding className="me-2" />
-                          Garage/Store Name *
-                        </label>
-                        <motion.input
-                          type="text"
-                          className="form-control bg-dark text-white border-0"
-                          name="garageName"
-                          value={form.garageName}
-                          onChange={handleChange}
-                          placeholder="Enter your garage/store name"
-                          required
-                          whileFocus={{ scale: 1.02 }}
-                          transition={{ duration: 0.2 }}
-                        />
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            {/* Address Section */}
+            <div data-aos="fade-up">
+              <h5 className="text-light mt-4 mb-3 d-flex align-items-center">
+                <FaMapMarkerAlt className="me-2 text-success" /> Address Details
+              </h5>
 
-                {/* Address Section */}
-                <motion.div variants={itemVariants}>
-                  <motion.h5 
-                    className="text-light mt-4 mb-3 d-flex align-items-center"
-                    variants={itemVariants}
-                  >
-                    <FaMapMarkerAlt className="me-2 text-success" />
-                    Address Details
-                  </motion.h5>
+              <div className="row g-3">
+                <div className="col-12">
+                  <label className="form-label text-light">Street Address</label>
+                  <input
+                    type="text"
+                    className="form-control bg-dark text-white border-0"
+                    name="street"
+                    value={form.street}
+                    onChange={handleChange}
+                    placeholder="Enter street address"
+                  />
+                </div>
 
-                  <motion.div className="row g-3" variants={containerVariants}>
-                    <motion.div className="col-12" variants={itemVariants}>
-                      <label className="form-label text-light">Street Address</label>
-                      <motion.input
-                        type="text"
-                        className="form-control bg-dark text-white border-0"
-                        name="street"
-                        value={form.street}
-                        onChange={handleChange}
-                        placeholder="Enter street address"
-                        whileFocus={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    </motion.div>
+                <div className="col-6">
+                  <label className="form-label text-light">City *</label>
+                  <input
+                    type="text"
+                    className={`form-control bg-dark text-white border-0 ${errors.city ? "border border-danger" : ""}`}
+                    name="city"
+                    value={form.city}
+                    onChange={handleChange}
+                    placeholder="Enter city"
+                  />
+                  {errors.city && <small className="text-danger">{errors.city}</small>}
+                </div>
 
-                    <motion.div className="col-6" variants={itemVariants}>
-                      <label className="form-label text-light">City *</label>
-                      <motion.input
-                        type="text"
-                        className="form-control bg-dark text-white border-0"
-                        name="city"
-                        value={form.city}
-                        onChange={handleChange}
-                        placeholder="Enter city"
-                        required
-                        whileFocus={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    </motion.div>
+                <div className="col-6">
+                  <label className="form-label text-light">State *</label>
+                  <input
+                    type="text"
+                    className={`form-control bg-dark text-white border-0 ${errors.state ? "border border-danger" : ""}`}
+                    name="state"
+                    value={form.state}
+                    onChange={handleChange}
+                    placeholder="Enter state"
+                  />
+                  {errors.state && <small className="text-danger">{errors.state}</small>}
+                </div>
 
-                    <motion.div className="col-6" variants={itemVariants}>
-                      <label className="form-label text-light">State *</label>
-                      <motion.input
-                        type="text"
-                        className="form-control bg-dark text-white border-0"
-                        name="state"
-                        value={form.state}
-                        onChange={handleChange}
-                        placeholder="Enter state"
-                        required
-                        whileFocus={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    </motion.div>
+                <div className="col-6">
+                  <label className="form-label text-light">Country</label>
+                  <input
+                    type="text"
+                    className="form-control bg-dark text-white border-0"
+                    name="country"
+                    value={form.country}
+                    onChange={handleChange}
+                    placeholder="Enter country"
+                  />
+                </div>
 
-                    <motion.div className="col-6" variants={itemVariants}>
-                      <label className="form-label text-light">Country</label>
-                      <motion.input
-                        type="text"
-                        className="form-control bg-dark text-white border-0"
-                        name="country"
-                        value={form.country}
-                        onChange={handleChange}
-                        placeholder="Enter country"
-                        whileFocus={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    </motion.div>
+                <div className="col-6">
+                  <label className="form-label text-light">Pincode</label>
+                  <input
+                    type="text"
+                    className={`form-control bg-dark text-white border-0 ${errors.pincode ? "border border-danger" : ""}`}
+                    name="pincode"
+                    value={form.pincode}
+                    onChange={handleChange}
+                    placeholder="6-digit pincode"
+                    maxLength="6"
+                    pattern="[0-9]{6}"
+                  />
+                  {errors.pincode && <small className="text-danger">{errors.pincode}</small>}
+                </div>
+              </div>
+            </div>
 
-                    <motion.div className="col-6" variants={itemVariants}>
-                      <label className="form-label text-light">Pincode</label>
-                      <motion.input
-                        type="text"
-                        className="form-control bg-dark text-white border-0"
-                        name="pincode"
-                        value={form.pincode}
-                        onChange={handleChange}
-                        placeholder="6-digit pincode"
-                        maxLength="6"
-                        pattern="[0-9]{6}"
-                        whileFocus={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="btn btn-success w-100 fw-semibold mt-4 py-3 rounded-pill"
+              disabled={loading}
+              data-aos="zoom-in"
+            >
+              {loading ? (
+                <>
+                  <ClipLoader size={20} color="#ffffff" className="me-2" />
+                  Creating Account...
+                </>
+              ) : (
+                <>
+                  <FaCheck className="me-2" />
+                  Complete Registration
+                </>
+              )}
+            </button>
 
-                {/* Submit Button */}
-                <motion.button
-                  type="submit"
-                  className="btn btn-success w-100 fw-semibold mt-4 py-3 rounded-pill"
-                  disabled={loading}
-                  variants={itemVariants}
-                  whileHover={{ scale: loading ? 1 : 1.02 }}
-                  whileTap={{ scale: loading ? 1 : 0.98 }}
-                >
-                  {loading ? (
-                    <>
-                      <ClipLoader size={20} color="#ffffff" className="me-2" />
-                      Creating Account...
-                    </>
-                  ) : (
-                    <>
-                      <FaCheck className="me-2" />
-                      Complete Registration
-                    </>
-                  )}
-                </motion.button>
-
-                <motion.p 
-                  className="text-muted text-center mt-3 small"
-                  variants={itemVariants}
-                >
-                  By registering, you agree to our terms and conditions
-                </motion.p>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            <p className="text-muted text-center mt-3 small" data-aos="fade-in">
+              By registering, you agree to our terms and conditions
+            </p>
+          </form>
+        </div>
+      )}
+    </div>
   );
 };
 

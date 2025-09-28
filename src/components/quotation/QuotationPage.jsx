@@ -277,7 +277,7 @@ const QuotationPage = () => {
       {showCompare && (
         <div
           className="position-absolute top-0 start-0 scroll-y w-100 h-100 d-flex align-items-center justify-content-center"
-          style={{ zIndex: 1050, background: "rgba(0,0,0,0.5)" }}
+          style={{ zIndex: 1050}}
         >
           <div className="bg-dark rounded shadow p-4 w-100" style={{ maxWidth: "900px" }}>
             <div className="d-flex justify-content-between align-items-center mb-4">
