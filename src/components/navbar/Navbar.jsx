@@ -60,9 +60,9 @@ const Navbar = () => {
     <>
       <nav className="navbar navbar-expand-md bg-body-secondary-emphasis">
         <CarAnimation />
-        <div className="container-fluid container-lg my-lg-2 mx-auto ">
+        <div className="container-fluid container-lg  mx-auto ">
           <Link className="navbar-brand" to="/">
-            SpareLink
+            <img src="/logo.png" alt="AutoPartsHub" height="50" />
           </Link>
           <button
             className="navbar-toggler"
@@ -76,7 +76,7 @@ const Navbar = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="navbarNav">
+          <div className="collapse navbar-collapse " id="navbarNav">
             <ul className="navbar-nav mx-auto">
               <li className="nav-item mx-lg-2">
                 <Link
