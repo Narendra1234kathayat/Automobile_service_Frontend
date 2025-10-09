@@ -178,7 +178,7 @@ const ProductContainer = () => {
           <div className="row g-4">
             {visibleModels.map((model, index) => (
               <motion.div 
-                className="col-lg-3 col-md-4 col-sm-6" 
+                className="col-lg-3 col-md-4 col-6" 
                 key={model._id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -221,7 +221,7 @@ const ProductContainer = () => {
                       alt={model.carModel}
                       style={{ 
                         height: "200px", 
-                        objectFit: "cover",
+                        objectFit: "contain",
                         borderRadius: "20px 20px 0 0"
                       }}
                       onError={(e) => {

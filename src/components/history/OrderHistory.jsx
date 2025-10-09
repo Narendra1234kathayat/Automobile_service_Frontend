@@ -309,8 +309,8 @@ const OrderHistory = () => {
 
       {/* Orders Table */}
       <div className="card shadow-sm p-3 mt-4">
-        <div className="d-flex justify-content-end mb-3">
-        <h5 className="mb-3">Order Details</h5>
+        <div className="d-flex justify-content-between mb-3">
+        <h5 className="">Order Details</h5>
 
         
           <button className="btn btn-success" onClick={handleDownloadExcel}>
