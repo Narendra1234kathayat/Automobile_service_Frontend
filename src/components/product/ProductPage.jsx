@@ -9,6 +9,8 @@ import "react-multi-carousel/lib/styles.css";
 import { addToCart } from "../../Store/Slices/CartSlice";
 import { useDispatch } from "react-redux";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const ProductPage = () => {
   const { productId } = useParams();
@@ -21,6 +23,10 @@ const ProductPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    AOS.init({ duration: 800, once: false });
+  }, []);
 
   // Fetch product details
   useEffect(() => {
@@ -59,44 +65,45 @@ const ProductPage = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <ClipLoader size={50} color="#28a745" />
+      <div className="d-flex justify-content-center align-items-center vh-100 bg-dark">
+        <ClipLoader size={50} color="#00d4ff" />
       </div>
     );
   }
 
   if (!product)
-    return <p className="text-center text-white mt-5">No product found</p>;
+    return (
+      <p className="text-center text-white mt-5 bg-dark p-3 rounded">
+        No product found
+      </p>
+    );
 
-  const headingStyle = { color: "#f8f9fa" };
-  const subTextStyle = { color: "#adb5bd" };
-  const labelStyle = { color: "#ced4da" };
+  // Styles
+  const headingStyle = { color: "#ffffff" };
+  const subTextStyle = { color: "#b8c6db" };
+  const labelStyle = { color: "#a6b5cb" };
   const priceStyle = {
-    color: "#f8f9fa",
-    fontSize: "1.5rem",
+    color: "rgb(5, 151, 106)",
+    fontSize: "1.8rem",
     fontWeight: "bold",
   };
 
-  // Parse specifications string into list
   const specsArray = product.specifications
     ? product.specifications.split("\r\n")
     : [];
 
-  // Responsive carousel breakpoints
   const responsive = {
     desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
     tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
     mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
-  // Open quotation form
   const openQuotationForm = (supplier) => {
     setSelectedSupplier(supplier);
     setQuantity(1);
     setShowForm(true);
   };
 
-  // Submit quotation request
   const handleQuotationSubmit = async () => {
     const qty = Number(quantity);
     if (!qty || qty < 1 || qty > 100) {
@@ -105,7 +112,6 @@ const ProductPage = () => {
     }
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-
       const quotationData = {
         mechanicId: user,
         supplierId: selectedSupplier.userId._id,
@@ -115,8 +121,6 @@ const ProductPage = () => {
           name: product.name,
         },
       };
-
-      console.log("QuotationData sending:", quotationData);
 
       const response = await axiosInstance.post(
         `${BASE_URL}api/quotation/request-quotation`,
@@ -129,9 +133,8 @@ const ProductPage = () => {
         );
         setShowForm(false);
       }
-
     } catch (error) {
-      console.error("Quotation submit error:", error.response?.data || error.message);
+      console.error("Quotation submit error:", error);
       toast.error("❌ Failed to send quotation request");
     }
   };
@@ -141,123 +144,120 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="container my-5 p-4 rounded">
+    <div
+      className="container-fluid py-5"
+      
+    >
       <ToastContainer position="top-right" autoClose={3000} />
 
       {/* Product Info */}
-      <div className="row mb-5">
-        <div className="col-md-6 d-flex justify-content-center align-items-center">
-          <img
-            src={`${BASE_URL}${product.image}`}
-            alt={product.name}
-            className="img-fluid"
-            style={{
-              maxWidth: "100%",
-              height: "auto",
-              borderRadius: "1rem",
-              objectFit: "contain",
-            }}
-          />
-        </div>
-        <div className="col-md-6 text-white" style={{ paddingLeft: "2rem" }}>
-          <h2 style={headingStyle}>{product.name}</h2>
-          <p style={subTextStyle}>{product.description}</p>
-          <p style={priceStyle}>₹{product.price}</p>
-          <p>
-            <span style={labelStyle}>Category:</span>{" "}
-            {product.categoryId?.name} <br />
-            <span style={labelStyle}>Car Brand:</span>{" "}
-            {product.brandId?.map((b) => b.name).join(", ")} <br />
-            <span style={labelStyle}>Car Model:</span>{" "}
-            {product.modelId?.map((m) => m.carModel).join(", ")}
-          </p>
-          <p>
-            <span style={labelStyle}>Variant:</span>{" "}
-            {product.variant?.join(", ")}
-          </p>
-          <button
-            className="btn btn-primary mt-3"
-            onClick={() => AddToCart(product)}
-          >
-            🛒 Add to Cart
-          </button>
-          <button className="btn ms-2 btn-primary mt-3 text-white">
-            <a href="#supplier" className="text-white">
-              View Suppliers
-            </a>
-          </button>
+      <div className="container mb-5" data-aos="fade-up">
+        <div className="row align-items-center g-4">
+          <div className="col-md-6 text-center" data-aos="zoom-in">
+            <img
+              src={`${BASE_URL}${product.image}`}
+              alt={product.name}
+              className="img-fluid rounded-4 shadow"
+              style={{
+                maxWidth: "90%",
+                height: "auto",
+               
+              }}
+            />
+          </div>
+          <div className="col-md-6 text-white" data-aos="fade-left">
+            <h2 style={headingStyle}>{product.name}</h2>
+            <p style={subTextStyle}>{product.description}</p>
+            <p style={priceStyle}>₹{product.price}</p>
+            <p>
+              <span style={labelStyle}>Category:</span> {product.categoryId?.name}
+              <br />
+              <span style={labelStyle}>Car Brand:</span>{" "}
+              {product.brandId?.map((b) => b.name).join(", ")}
+              <br />
+              <span style={labelStyle}>Car Model:</span>{" "}
+              {product.modelId?.map((m) => m.carModel).join(", ")}
+            </p>
+            <p>
+              <span style={labelStyle}>Variant:</span>{" "}
+              {product.variant?.join(", ")}
+            </p>
+            <div className="mt-3">
+              <button
+                className="btn btn-success text-white fw-bold me-2"
+                onClick={() => AddToCart(product)}
+              >
+                🛒 Add to Cart
+              </button>
+              <a href="#supplier" className="btn btn-outline-light fw-bold">
+                View Suppliers
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Specifications */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <h4 style={headingStyle}>Specifications</h4>
-          <ul className="list-group">
-            {specsArray.map((line, i) => (
-              <li
-                key={i}
-                className="list-group-item"
-                style={{
-                  backgroundColor: "#2c3136",
-                  borderColor: "#3d444a",
-                  color: "#e9ecef",
-                }}
-              >
-                {line}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="container mb-4" data-aos="fade-up">
+        <h4 style={headingStyle}>Specifications</h4>
+        <ul className="list-group mt-3">
+          {specsArray.map((line, i) => (
+            <li
+              key={i}
+              className="list-group-item"
+              style={{
+                backgroundColor: "#002b5c",
+                borderColor: "#00509d",
+                color: "#d9e6ff",
+              }}
+              data-aos="fade-right"
+            >
+              {line}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* Suppliers Carousel */}
-      <div className="row my-4" id="supplier">
-        <div className="col-12">
-          <h4 style={headingStyle} className="my-3">
-            Suppliers
-          </h4>
-        </div>
-        <Carousel
-          responsive={responsive}
-          infinite
-          autoPlay
-          autoPlaySpeed={4000}
-          ariaHiddenOnInactiveSlides={false} // ✅ Fix accessibility error
-        >
+      {/* Suppliers */}
+      <div className="container my-5" id="supplier" data-aos="fade-up">
+        <h4 style={headingStyle} className="mb-4">
+          Suppliers
+        </h4>
+        <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={4000}>
           {suppliers.length > 0 ? (
             suppliers.map((sup, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-                className="p-2"
-              >
+              <div>
                 <div
                   className="card h-100 rounded-3 shadow"
-                  style={{
-                    backgroundColor: "#2c3136",
-                    border: "1px solid #3d444a",
-                  }}
+                  data-aos="zoom-in"
+                  style={
+                    {
+                      minHeight: "250px",
+
+                    }
+                  }
+                  
                 >
-                  <div className="card-body text-white">
+                  <div className="card-body text-white"
+                    style={{ margin:"15px", backgroundColor: "#001f3f",height:"100%"}}
+                    >
                     <h5 className="fw-bold">{sup.userId.name}</h5>
-                    <p className="mb-2" style={{ color: "#adb5bd" }}>
+                    <p className="" style={{ color: "#b8d1ff" }}>
                       📍 {sup.address?.street}, {sup.address?.city},{" "}
                       {sup.address?.state} <br />
                       📞 {sup.userId.phoneNumber} <br />
-                      <span className="fw-bold text-white">Email</span>  {sup.userId.email}
+                      <strong>Email:</strong> {sup.userId.email}
                     </p>
                     <button
                       type="button"
-                      className="btn btn-success w-100 mt-auto"
+                      className="btn btn-success w-100 mt-auto text-white fw-bold "
                       onClick={() => openQuotationForm(sup)}
                     >
                       Request Quotation
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))
           ) : (
             <p className="text-white ms-3">No suppliers available</p>
@@ -272,26 +272,28 @@ const ProductPage = () => {
           style={{ backgroundColor: "rgba(0,0,0,0.7)", zIndex: 1050 }}
         >
           <div
-            className="bg-dark text-white p-4 rounded"
+            className="bg-dark text-white p-4 rounded shadow-lg"
             style={{ width: "400px" }}
+            data-aos="zoom-in"
           >
-            <h5 className="mb-3">Request Quotation</h5>
+            <h5 className="mb-3 text-info">Request Quotation</h5>
             <p>
               Supplier: <strong>{selectedSupplier?.userId?.name}</strong>
             </p>
             <div className="mb-3">
-              <label className="form-label">Quantity</label>
+              <label className="form-label text-light">Quantity</label>
               <input
                 type="number"
                 min="1"
                 max="100"
-                className="form-control"
+                className="form-control bg-secondary text-white"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />
-              <small className="text-muted">Enter quantity between 1 and 100</small>
+              <small className="text-muted">
+                Enter quantity between 1 and 100
+              </small>
             </div>
-
             <div className="d-flex justify-content-end">
               <button
                 type="button"
@@ -302,7 +304,7 @@ const ProductPage = () => {
               </button>
               <button
                 type="button"
-                className="btn btn-success"
+                className="btn btn-info text-white fw-bold"
                 onClick={handleQuotationSubmit}
               >
                 Submit

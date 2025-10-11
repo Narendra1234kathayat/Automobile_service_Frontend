@@ -6,7 +6,7 @@ const HeroSection = () => {
   
 
   return (
-    <section className="pt-lg-5 pt-3 mb-lg-4 mb-3">
+    <section className="pt-lg-2 pt-3 mb-lg-4 mb-3">
       <div className="container">
         <div className="row align-items-center">
           
@@ -18,10 +18,11 @@ const HeroSection = () => {
             <h1 className="display-4 fw-bold mb-3 text-white">
               Find Genuine <span className="text-success">Spare Parts</span> Easily
             </h1>
-            <p className="lead mb-4 text-white">
-              Discover nearby hardware shops, check availability, and track your
-              vehicle's servicing—all in one place.
+            <p className="lead  text-white">
+              Connecting Mechanics with Spare Parts Suppliers - Instantly, Efficiently, Digitally.
             </p>
+            <p className="text-white">   Your Complete B2B Marketplace for Automotive Spare Parts - Streamlining Orders, Optimizing Inventory, Accelerating Business.
+</p>
             <a
               href="#category"
               className="btn btn-lg btn-success px-4 py-2 rounded-pill"

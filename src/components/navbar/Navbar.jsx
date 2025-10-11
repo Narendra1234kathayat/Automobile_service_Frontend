@@ -58,11 +58,11 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-md bg-body-secondary-emphasis">
+      <nav className="navbar navbar-expand-md bg-body-secondary-emphasis p-0">
         <CarAnimation />
-        <div className="container-fluid container-lg  mx-auto ">
+        <div className="container-fluid container-lg  mx-auto p-0 ">
           <Link className="navbar-brand" to="/">
-            <img src="/logo.png" alt="AutoPartsHub" height="50" />
+            <img src="/logo.png" alt="AutoPartsHub" height="80" />
           </Link>
           <button
             className="navbar-toggler"
@@ -89,7 +89,7 @@ const Navbar = () => {
                 </Link>
               </li>
 
-              
+
 
               {/* ✅ Quotation NavLink */}
               <li className="nav-item mx-lg-2">
@@ -125,22 +125,22 @@ const Navbar = () => {
                 </Link>
               </li>
 
-              
+
             </ul>
 
             {/* 🔍 Search Input */}
             <form className="d-flex me-3 w-md-auto" onSubmit={handleSearch}>
               <input
                 type="text"
-                className="form-control"
+                className="form-control bg-transparent text-white border border-light rounded-3 px-3 py-2 active"
                 placeholder="Search spare parts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
 
-            {/* ✅ Auth Buttons */}
-            {/* ✅ Auth Buttons */}
+
+           
             <ul className="navbar-nav mt-2 mt-md-0">
               {!isLoggedIn ? (
                 <>

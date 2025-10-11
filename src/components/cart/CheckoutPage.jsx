@@ -141,7 +141,7 @@ const CheckoutPage = ({ setShowCheckout, quotation }) => {
         {quotation && (
           <div className="alert alert-info">
             <strong>Product:</strong> {quotation.product?.sparePartId?.name} <br />
-            <strong>Supplier:</strong> {quotation.supplierId?.storeName} <br />
+            <strong>Supplier:</strong> {quotation.supplierId?.name} <br />
             <strong>Quantity:</strong> {quotation.product?.quantity} <br />
             <strong>Total:</strong> ₹{quotation.product?.totalPrice}
           </div>

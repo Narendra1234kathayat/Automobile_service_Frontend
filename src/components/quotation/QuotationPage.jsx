@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axiosInstance from "../../utils/axiosInstance";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 import CheckoutPage from "../cart/CheckoutPage.jsx"; // import checkout
-
+import SocketUser from "../../socket/SocketUser.js";
+import { set } from "react-hook-form";
 const QuotationPage = () => {
   const [quotations, setQuotations] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -13,6 +16,21 @@ const QuotationPage = () => {
   const [showCheckout, setShowCheckout] = useState(false);
   const [checkoutData, setCheckoutData] = useState(null);
   const [showCompare, setShowCompare] = useState(false);
+
+    useEffect(() => {
+    SocketUser.on("quotation-approved", (data) => {
+      console.log("Socket event:", data);
+      
+      setQuotations((prev) => [...prev, data]);
+      toast.success(`✅ Quotation Approved: ${data?.message || "Successfully accepted!"}`);
+      fetchQuotations();
+    });
+
+    return () => {
+      SocketUser.off("quotation-approved");
+    };
+  }, []);
+  
 
   // ✅ Fetch Quotations
   const fetchQuotations = async () => {
@@ -61,7 +79,7 @@ const QuotationPage = () => {
         if (filter.productSearch && !q.product?.sparePartId?.name.toLowerCase().includes(filter.productSearch.toLowerCase()))
           return false;
 
-        if (filter.supplier && !q.supplierId?.storeName?.toLowerCase().includes(filter.supplier.toLowerCase()))
+        if (filter.supplier && !q.supplierId?.name?.toLowerCase().includes(filter.supplier.toLowerCase()))
           return false;
 
         return true;
@@ -223,7 +241,7 @@ const QuotationPage = () => {
       <div className="row">
         {filteredQuotations.length ? (
           filteredQuotations.map((q) => (
-            <div key={q._id} className="col-md-4 col-6 col-lg-3 mb-3 ">
+            <div key={q._id} className="col-md-4 col-6 col-lg-3  ">
               <div
                 className={`card h-100 border border-white ${selected.includes(q._id) ? "border-2" : ""}`}
               >
@@ -232,10 +250,13 @@ const QuotationPage = () => {
                   <p className="mb-1">Supplier: {q.supplierId?.name || "N/A"}</p>
                   <p className="mb-1">Quantity: {q.product?.quantity}</p>
                   <p className="mb-1">Unit Price: ₹{q.product?.perUnitPrice}</p>
-                  <p className="fw-bold" style={{ color: "#05976A" }}>
+                  <p className="fw-bold mb-0" style={{ color: "#05976A" }}>
                     Total: ₹{q.product?.totalPrice}
                   </p>
+                  <p className="mb-1">delievery expected in : {q.deliveryDate}</p>
                   <p className="text-white mb-0">{new Date(q.createdAt).toLocaleString()}</p>
+                  <Link className="btn-outline-info mt-2 fs-5 text-info text-decoration-underline " to={`/product/${q.product.sparePartId._id}`}>View Product</Link>
+
                 </div>
                 <div className="card-footer bg-transparent d-flex flex-column gap-2">
                   <button

@@ -155,9 +155,36 @@ useEffect(() => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+  const { name, value } = e.target;
+  let numValue = Number(value);
+
+  // Validation for perUnitPrice
+  if (name === "perUnitPrice") {
+    if (numValue < 0) {
+      toast.error("Unit price cannot be negative");
+      return;
+    }
+    if (numValue > 1000000) {
+      toast.error("Unit price too large");
+      return;
+    }
+  }
+
+  // Validation for discountPercentage
+  if (name === "discountPercentage") {
+    if (numValue < 0) {
+      toast.error("Discount cannot be negative");
+      return;
+    }
+    if (numValue > 100) {
+      toast.error("Discount cannot exceed 100%");
+      return;
+    }
+  }
+
+  setForm((prev) => ({ ...prev, [name]: value }));
+};
+
 
   const hasActionable = filteredRequests.some((q) =>
     actionableStatuses.includes(q.status)
@@ -283,6 +310,9 @@ useEffect(() => {
                   type="number"
                   className="form-control"
                   name="perUnitPrice"
+                  min="0"
+                  max="100000"
+                  
                   value={form.perUnitPrice}
                   onChange={handleChange}
                   required
@@ -292,6 +322,8 @@ useEffect(() => {
                 <label className="form-label">Discount (%)</label>
                 <input
                   type="number"
+                  min="0"
+                  max="100" 
                   className="form-control"
                   name="discountPercentage"
                   value={form.discountPercentage}

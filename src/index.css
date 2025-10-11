@@ -59,7 +59,7 @@ body {
   left: 0;
   right: 0;
   width: 95%;
-  z-index: 9999;
+  z-index: 1;
   /* overflow: hidden !important; */
   margin: 0 auto;
   border-radius: 10px;
@@ -163,7 +163,7 @@ body {
   border-color: #05976A;
 }
 .dropdown-menu {
-  z-index: 2000 !important;
+  z-index: 1000 !important;
 }
 
 
@@ -173,6 +173,7 @@ body {
 .white {
   color: white;
 }
+
 
 
 /* cart page css */
@@ -305,7 +306,7 @@ body {
 
 @media (max-width: 968px) {
   .sidebar {
-     margin-left: 0px !important;
+     margin-left: auto !important;
   }
   
 }

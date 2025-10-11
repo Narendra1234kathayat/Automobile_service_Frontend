@@ -44,17 +44,19 @@ const HomeScreen = () => {
             <h1
               className="display-5 fw-sm-bold  mb-3"
               style={{ color: "#05976A" }}
-              data-aos="fade-down"
+              data-aos="fade-right"
             >
               Welcome Mechanic to SpareLink!
+
             </h1>
+
 
             <p
               className="lead mb-4"
               style={{ fontSize: "1.2rem" }}
               
             >
-              Browse users, service centers, and hardware shops with ease.
+              Browse Spareparts, suppliers, and spareparts shops with ease.
             </p>
 
             <button

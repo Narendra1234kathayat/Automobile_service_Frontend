@@ -83,8 +83,8 @@ const CategoryContainer = () => {
               <img
                 src={brand.logo ? BASE_URL + brand.logo : "src/assets/shop.png"}
                 alt={`${brand.name} logo`}
-                className="card-img-top p-3"
-                style={{ height: "100px", objectFit: "contain" }}
+                className="card-img-top p-md-3"
+                style={{ height: "90px", objectFit: "contain" }}
               />
               <div className="card-body d-flex align-items-center justify-content-center">
                 <h5 className="card-title text-center fw-bold">{brand.name}</h5>

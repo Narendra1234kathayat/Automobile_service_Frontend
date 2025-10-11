@@ -19,9 +19,11 @@ function Login() {
   // 🔹 Redirect if already logged in
   useEffect(() => {
     const storedRole = JSON.parse(localStorage.getItem('role'));
-    if (storedRole) {
+    const token = localStorage.getItem('token');
+    if (token && storedRole) {
       navigate(storedRole === 'supplier' ? '/supplier' : '/');
     }
+    
   }, [navigate]);
 
   // 🔹 Validation function

@@ -173,8 +173,8 @@ const SpareParts = () => {
           Spare Parts
           <span className="badge bg-success ms-3 fs-6">{uniqueSpareParts.length}</span>
         </h3>
-        <button className="btn btn-outline-success btn-sm px-4" onClick={() => navigate("/spareparts")}>
-          <i className="fas fa-arrow-right me-2"></i>
+        <button className="btn btn-outline-success btn-sm px-4 text-white" onClick={() => navigate("/spareparts")}>
+         
           View All
         </button>
       </div>

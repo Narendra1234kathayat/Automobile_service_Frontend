@@ -264,7 +264,7 @@ const uniqueParts = Array.from(
         {filteredParts.length > 0 ? (
           filteredParts.map((part, index) => (
             <div
-              className="col-sm-6 col-lg-3 col-md-4 mb-3"
+              className="col-6 col-lg-3 col-md-4 mb-3"
               key={part._id}
               data-aos="zoom-in"            // ✅ AOS animation
               data-aos-delay={index * 100} // ✅ Staggered animation

@@ -36,7 +36,7 @@ const CartPage = () => {
             <i className="fas fa-box-open"></i>
           </div>
           <h5 className="text-white mb-3">Your Stock is empty</h5>
-          <p className="text-muted mb-4">Explore our spare parts and add items to your wishlist.</p>
+          <p className="text-white mb-4">Explore our spare parts and add items to your wishlist.</p>
           <button className="btn btn-outline-success" onClick={() => navigate("/spareparts")}>
             Browse Spare Parts
           </button>
