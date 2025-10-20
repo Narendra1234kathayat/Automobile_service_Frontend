@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
+import SocketUser from "../../socket/SocketUser.js"
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import CategoryContainer from "./CategoryContainer.jsx";
 import StoreContainer from "./StoreContainer.jsx";
@@ -18,6 +19,14 @@ const HomeScreen = () => {
       mirror: true,   // animate on scroll up
       offset: 100,    // trigger point offset
     });
+      SocketUser.on("quotation-approved", (data) => {
+      console.log("Quotation approved data received:", data);
+      toast.info("Quotation Approved ");
+      });
+
+    return () => {
+      SocketUser.off("quotation-approved");
+    };
   }, []);
 
   return (

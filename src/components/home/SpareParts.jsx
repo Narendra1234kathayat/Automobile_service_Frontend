@@ -5,6 +5,7 @@ import "react-multi-carousel/lib/styles.css";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import SocketUser from "../../socket/SocketUser.js";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -18,12 +19,25 @@ const SpareParts = () => {
   // Initialize AOS
   useEffect(() => {
     AOS.init({
-      duration: 800,
+      duration: 500,
       easing: "ease-in-out",
       once: false,
     });
     AOS.refresh();
   }, []);
+    useEffect(() => {
+  const handleSparePartChange = (data) => {
+    console.log("New spare part received via socket:", data);
+    fetchSpareparts(); // Refetch all spare parts
+  };
+
+  SocketUser.on("spare-part-change", handleSparePartChange);
+
+  return () => {
+    SocketUser.off("spare-part-change", handleSparePartChange);
+  };
+}, []);
+
 
   // Responsive breakpoints for the carousel
   const responsive = {

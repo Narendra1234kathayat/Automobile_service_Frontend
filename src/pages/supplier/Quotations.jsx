@@ -24,7 +24,7 @@ const Quotations = () => {
 useEffect(() => {
   if (id && quotationRequests.length > 0) {
     const quotation = quotationRequests.find((q) => q._id === id);
-    if (quotation) handleAccept(quotation);
+    if (quotation && quotation.status === "pending") handleAccept(quotation);
   }
 }, [id, quotationRequests]);
 
@@ -146,11 +146,16 @@ useEffect(() => {
             q._id === selectedQuotation._id ? { ...q, status: "approved" } : q
           )
         );
-        setSelectedQuotation(null);
+         setSelectedQuotation(null);
+
+      
       }
     } catch (error) {
       console.log("Error approving quotation:", error);
       toast.error("Failed to approve quotation");
+    }
+    finally{
+      setSelectedQuotation(null);
     }
   };
 

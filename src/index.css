@@ -39,6 +39,9 @@ table th, table td {
     font-size: 0.75rem; /* 12px */
   }
 }
+.Toastify__toast-container {
+  z-index: 999999 !important;
+}
 
 body {
   font-family: 'Segoe UI', Arial, sans-serif;

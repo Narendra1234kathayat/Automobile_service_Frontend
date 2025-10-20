@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance, { BASE_URL } from "../../utils/axiosInstance";
 import { useSelector } from "react-redux";
+import SocketUser from "../../socket/SocketUser.js";
+import Aos from "aos";
 // Variants (static for now, in lowercase)
 const variants = ["petrol", "diesel", "cng", "electric"];
 
@@ -27,6 +29,27 @@ const SparePartsPage = () => {
       setSearchTerm(data);
     }
   }, [data]);
+  useEffect(() => {
+  const handleSparePartChange = (data) => {
+    console.log("New spare part received via socket:", data);
+    fetchSpareParts(); // Refetch all spare parts
+  };
+
+  SocketUser.on("spare-part-change", handleSparePartChange);
+
+  return () => {
+    SocketUser.off("spare-part-change", handleSparePartChange);
+  };
+}, []);
+
+  useEffect(() => {
+    Aos.init({
+      duration: 500,
+      easing: "ease-in-out",
+      once: true,
+    });
+    Aos.refresh();
+  }, []);
 
 
   // ✅ Fetch Categories
@@ -88,10 +111,7 @@ const SparePartsPage = () => {
       }
     }
   }, [brandName, modelName, brands]);
-
-  // ✅ Fetch Spare Parts
-  useEffect(() => {
-    const fetchSpareParts = async () => {
+   const fetchSpareParts = async () => {
       try {
         const res = await axiosInstance.get("/api/spare-part/spare-parts/mechanic");
         setSpareParts(res.data.data);
@@ -99,8 +119,13 @@ const SparePartsPage = () => {
         console.error("Error fetching products:", err);
       }
     };
+
+  // ✅ Fetch Spare Parts
+  useEffect(() => {
+    
     fetchSpareParts();
   }, []);
+ 
 
   const handleCategoryClick = (category) => setSelectedCategory(category);
 

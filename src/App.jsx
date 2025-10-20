@@ -6,6 +6,7 @@ import Login from './components/auth/Login';
 import AOS from "aos";
 import "aos/dist/aos.css"; 
 
+import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 //import socket from "../src/socket/SocketUser.js"; // adjust path if different
 function App() {

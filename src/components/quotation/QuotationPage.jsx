@@ -17,19 +17,24 @@ const QuotationPage = () => {
   const [checkoutData, setCheckoutData] = useState(null);
   const [showCompare, setShowCompare] = useState(false);
 
-    useEffect(() => {
-    SocketUser.on("quotation-approved", (data) => {
-      console.log("Socket event:", data);
-      
-      setQuotations((prev) => [...prev, data]);
-      toast.success(`✅ Quotation Approved: ${data?.message || "Successfully accepted!"}`);
-      fetchQuotations();
-    });
+  useEffect(() => {
+  const handleQuotationApproved = (data) => {
+    console.log(data.status);
+    toast.dismiss();
+    toast.success(`Quotation Approved`);
+    setQuotations((prev) => [...prev, data]);
+    fetchQuotations();
+  };
 
-    return () => {
-      SocketUser.off("quotation-approved");
-    };
-  }, []);
+  // Attach listener once
+  SocketUser.on("quotation-approved", handleQuotationApproved);
+
+  // Cleanup to remove listener
+  return () => {
+    SocketUser.off("quotation-approved", handleQuotationApproved);
+  };
+}, []); // empty dependency array → runs once
+
   
 
   // ✅ Fetch Quotations
@@ -39,6 +44,7 @@ const QuotationPage = () => {
     try {
       const res = await axiosInstance.get("/api/quotation/get-quotation/mechanic");
       if (res.status === 200) setQuotations(res.data.data || []);
+      toast.success("Quotations fetched successfully");
     } catch (err) {
       setError("Failed to fetch quotations. Please try again.");
     } finally {

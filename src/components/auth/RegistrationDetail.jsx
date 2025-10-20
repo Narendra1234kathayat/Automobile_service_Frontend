@@ -209,7 +209,7 @@ const RegistrationDetail = ({ step, setStep, form, handleChange, handleSubmit, l
               type="submit"
               className="btn btn-success w-100 fw-semibold mt-4 py-3 rounded-pill"
               disabled={loading}
-              data-aos="zoom-in"
+              
             >
               {loading ? (
                 <>
@@ -224,7 +224,7 @@ const RegistrationDetail = ({ step, setStep, form, handleChange, handleSubmit, l
               )}
             </button>
 
-            <p className="text-muted text-center mt-3 small" data-aos="fade-in">
+            <p className="text-muted text-center mt-3 small" >
               By registering, you agree to our terms and conditions
             </p>
           </form>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+
 import { motion } from "framer-motion";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -148,7 +148,7 @@ const ProductPage = () => {
       className="container-fluid py-5"
       
     >
-      <ToastContainer position="top-right" autoClose={3000} />
+      
 
       {/* Product Info */}
       <div className="container mb-5" data-aos="fade-up">
