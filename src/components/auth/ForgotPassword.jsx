@@ -117,9 +117,11 @@ const ForgotPassword = () => {
   // Resend OTP
   const handleResendOtp = async () => {
     try {
-      await axios.post("/api/auth/resend-otp", { email });
+      const response = await axiosInstance.post(`${BASE_URL}api/users/forgot-password`, { email });
       toast.info("New OTP sent to your email!");
+      console.log(response)
       setTimeLeft(120);
+
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to resend OTP!");
     }
